@@ -1,0 +1,172 @@
+.course-page {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f2f2f2;
+  }
+  
+  .course-page h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .course-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .course-card {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    text-align: center;
+    width: 35%;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-5%);
+  }
+  
+  .course-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .rating-star {
+    font-size: 1.5rem;
+    color: #ffc107;
+    margin-right: 0.25rem;
+  }
+  
+  .rating-count {
+    font-size: 0.875rem;
+    color: #666;
+    margin-left: 0.5rem;
+  }
+  
+  .course-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .course-info {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    width: 30%;
+  }
+  
+  .course-info div {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+  
+  .course-instructor-icon {
+    background-image: url('../../assets/images/teacher.png');
+  }
+  
+  .course-duration-icon {
+    background-image: url('../../assets/images/history.png');
+  }
+  
+  .course-students-icon {
+    background-image: url('../../assets/images/reading.png');
+  }
+  
+  .course-info p {
+    margin: 0;
+  }
+  
+  .course-button {
+    background-color: #0a2b1e;
+    border: none;
+    border-radius: 0.25rem;
+    color: #fff;
+    margin: 10px;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .course-button:hover {
+    background-color: #17bf9e;
+  }
+
+  /* carousel courses*/
+  .carousel-container {
+    position: relative;
+    width: 50%;
+    height: 40%;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  
+  .carousel-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .carousel-item {
+    flex: 0 0 100%;
+    width: 100%;
+    position: relative; /* Add this for caption positioning */
+  }
+  
+  .carousel-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .carousel-caption {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .slideshowDots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+  }
+  
+  .slideshowDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #fff;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+  
+  .slideshowDot.active {
+    background-color: #333;
+  }
