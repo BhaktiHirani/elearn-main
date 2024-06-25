@@ -103,6 +103,7 @@
     const { title, ImgUrl, rating: courseRating, price, mediaUrl, description, modules, instructor } = course;
     const currentModule = modules && modules[currentModuleIndex];
     const totalModules = modules ? modules.length : 0;
+    
 
     return (
       <div className="container py-5">
