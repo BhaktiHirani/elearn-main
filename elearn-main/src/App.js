@@ -63,7 +63,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/enroll/:id" element={<EnrollmentForm />} />
-        <Route path="/quiz" element={<QuizPage />} />
+        <Route path="/quiz/:id" element={<QuizPage />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/instructors" element={<Instructors />} />
         <Route

@@ -138,7 +138,6 @@
         userName: userName,
         userEmail: userEmail,
         courseId: id,
-        handleEnroll: handleEnroll
       }
     }}
     className="btn btn-primary enroll-button"
