@@ -1,0 +1,43 @@
+/* QuizPage.css */
+
+/* Animation for question transitions */
+.question-enter {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.question-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.question-exit {
+    opacity: 1;
+}
+
+.question-exit-active {
+    opacity: 0;
+    transition: opacity 300ms;
+}
+
+/* Animation for results transitions */
+.results-enter {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.results-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.results-exit {
+    opacity: 1;
+}
+
+.results-exit-active {
+    opacity: 0;
+    transition: opacity 300ms;
+}

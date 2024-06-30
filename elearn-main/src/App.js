@@ -70,7 +70,7 @@ function App() {
           path="/login"
           element={
             isLoggedIn ? (
-              <Navigate to="/" replace /> // Redirect to home if already logged in
+              <Navigate to="/" replace /> 
             ) : (
               <Login onLoginSuccess={handleLoginSuccess} />
             )
@@ -83,7 +83,7 @@ function App() {
               <Profile isLoggedIn={isLoggedIn} onLogout={handleLogout} />
 
             ) : (
-              <Navigate to="/login" replace /> // Redirect to login if not logged in
+              <Navigate to="/login" replace /> 
             )
           }
         />

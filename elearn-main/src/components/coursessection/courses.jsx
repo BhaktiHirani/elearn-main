@@ -66,7 +66,7 @@ const Courses = ({ limit, showSearchBar }) => {
             </Row>
           </Form>
         ) : (
-          <div className="text-end mb-4">  {/* Add mb-4 to add margin-bottom */}
+          <div className="text-end mb-4">  
  
               <Button variant="outline" className="show-all-courses-btn" onClick={handleShowAllCourses}>
                 Show All Courses

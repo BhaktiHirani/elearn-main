@@ -1,153 +1,172 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Container, Card, Button, Form } from 'react-bootstrap';
+import { getDatabase, ref, get} from 'firebase/database';
+import { CSSTransition } from 'react-transition-group';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import CertificateTemplate from './certificate';
+import './quiz.css';
+import { useParams } from 'react-router-dom';
 
 const QuizPage = () => {
-  const location = useLocation();
-  const { userName, userEmail, courseId } = location.state || {};
+    const { id } = useParams();
+    const [quizData, setQuizData] = useState(null);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [answers, setAnswers] = useState([]);
+    const [showResults, setShowResults] = useState(false);
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [showCertificate, setShowCertificate] = useState(false);
+    const [userName, setUserName] = useState("");
+    const [courseName, setCourseName] = useState("");
+    const [quizDuration, setQuizDuration] = useState(0);
 
-  // Mock quiz data for demonstration purposes
-  const quiz = {
-    title: "Sample Quiz",
-    instructor: "John Doe",
-    timeLimit: 30,
-    questions: [
-      {
-        id: 1,
-        question: "What is the capital of France?",
-        image: "https://www.hdwallpapers10.com/wp-content/uploads/2017/05/paris%20france%20eiffel%20tower%20beautiful%20amazing%20images%20full%20hd.jpg",
-        options: [
-          { id: 'a', text: 'Paris' },
-          { id: 'b', text: 'London' },
-          { id: 'c', text: 'Berlin' },
-          { id: 'd', text: 'Madrid' }
-        ],
-        correctAnswer: 'a'
-      },
-      {
-        id: 2,
-        question: "Who painted the Mona Lisa?",
-        options: [
-          { id: 'a', text: 'Vincent van Gogh' },
-          { id: 'b', text: 'Leonardo da Vinci' },
-          { id: 'c', text: 'Pablo Picasso' },
-          { id: 'd', text: 'Michelangelo' }
-        ],
-        correctAnswer: 'b'
-      }
-    ]
-  };
+    useEffect(() => {
+        const fetchData = async () => {
+            const db = getDatabase();
+            const quizRef = ref(db, `user/courses/${id}/quizzes/quizId1`);
+            
+            try {
+                const snapshot = await get(quizRef);
+                const data = snapshot.val();
+                
+                if (data) {
+                    setQuizData(data);
+                    setCourseName(data.courseName);
+                    setQuizDuration(data.quizDuration);
+                } else {
+                    console.log("No such quiz document!");
+                    setQuizData(null);
+                }
+            } catch (error) {
+                console.error('Error fetching quiz data:', error);
+            }
+        };
 
-  // State to track current question, selected answers, and quiz completion
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [quizCompleted, setQuizCompleted] = useState(false);
+        fetchData();
+    }, [id]);
 
-  // Function to handle selecting an answer
-  const handleSelectAnswer = (questionId, optionId) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
-      [questionId]: optionId
-    });
-  };
+    const handleNextQuestion = () => {
+        setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+    };
 
-  // Function to handle moving to the next question
-  const handleNextQuestion = () => {
-    if (currentQuestion < quiz.questions.length - 1) {
-      setCurrentQuestion(prev => prev + 1);
-    } else {
-      // If last question, mark quiz as completed
-      setQuizCompleted(true);
+    const handlePreviousQuestion = () => {
+        setCurrentQuestionIndex(prevIndex => prevIndex - 1);
+    };
+
+    const handleAnswerSelect = (questionId, selectedOptionId) => {
+        const updatedAnswers = [...answers];
+        updatedAnswers[questionId] = selectedOptionId;
+        setAnswers(updatedAnswers);
+    };
+
+    const handleSubmitQuiz = () => {
+        const correct = quizData.questions.reduce((acc, question) => {
+            const userAnswer = answers[question.id];
+            if (userAnswer === question.correctAnswer) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0);
+
+        setCorrectAnswers(correct);
+        setShowResults(true);
+    };
+
+    const generateCertificate = () => {
+        setUserName("John Doe"); // Replace with actual user's name
+        setShowCertificate(true);
+    };
+
+    if (!quizData) {
+        return <div className="text-center mt-5">No quiz found for this ID.</div>;
     }
-  };
 
-  // Function to handle quiz submission
-  const handleSubmitQuiz = () => {
-    // Logic for submitting quiz, e.g., sending answers to backend
-    console.log("Quiz submitted:", selectedAnswers);
-    // Optionally, navigate to result page or display feedback
-  };
+    const currentQuestion = quizData.questions[currentQuestionIndex];
 
-  return (
-    <div className="container py-5">
-      <h1 className="text-center mb-4">{quiz.title}</h1>
-      <div className="text-center mb-4">
-        <p className="mb-2">Instructor: {quiz.instructor}</p>
-        <p>Time Limit: {quiz.timeLimit} minutes</p>
-      </div>
+    return (
+        <Container>
+            <Card className="mt-4">
+                <Card.Body>
+                    <h3 className="mb-4">{courseName}</h3>
+                    <CSSTransition
+                        in={!showResults && !showCertificate}
+                        timeout={300}
+                        classNames="question"
+                        unmountOnExit
+                    >
+                        <div>
+                            <Card.Title>{currentQuestion.question}</Card.Title>
+                            {currentQuestion.image && (
+                                <img src={currentQuestion.image} alt="Question" className="img-fluid mb-2" />
+                            )}
+                            <Form>
+                                {currentQuestion.options.map(option => (
+                                    <Form.Check
+                                        key={option.id}
+                                        type="radio"
+                                        id={option.id}
+                                        label={option.text}
+                                        name={`question${currentQuestion.id}`}
+                                        value={option.id}
+                                        checked={answers[currentQuestion.id] === option.id}
+                                        onChange={() => handleAnswerSelect(currentQuestion.id, option.id)}
+                                    />
+                                ))}
+                            </Form>
+                            <div>
+                                {currentQuestionIndex > 0 && (
+                                    <Button variant="secondary" onClick={handlePreviousQuestion}>
+                                        Previous
+                                    </Button>
+                                )}
+                                {currentQuestionIndex < quizData.questions.length - 1 && (
+                                    <Button variant="primary" onClick={handleNextQuestion} className="ms-2">
+                                        Next
+                                    </Button>
+                                )}
+                                {currentQuestionIndex === quizData.questions.length - 1 && (
+                                    <Button variant="success" onClick={handleSubmitQuiz} className="ms-2">
+                                        Submit Quiz
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </CSSTransition>
 
-      {/* Quiz questions */}
-      {quiz.questions.map((question, index) => (
-        <div key={question.id} className={`card mb-4 ${index === currentQuestion ? 'd-block' : 'd-none'}`}>
-          <div className="card-body">
-            <h5 className="card-title mb-4">{question.question}</h5>
-            {question.image && (
-              <img src={question.image} alt="Question Media" className="img-fluid mb-1" width="20%" height="20%" />
-            )}
-            <div className="form-check">
-              {question.options.map(option => (
-                <div key={option.id} className="form-check mb-2">
-                  <input 
-                    className="form-check-input" 
-                    type="radio" 
-                    id={`option_${option.id}`} 
-                    name={`question_${question.id}`} 
-                    value={option.id}
-                    checked={selectedAnswers[question.id] === option.id}
-                    onChange={() => handleSelectAnswer(question.id, option.id)}
-                    disabled={quizCompleted} // Disable input when quiz is completed
-                  />
-                  <label className="form-check-label" htmlFor={`option_${option.id}`}>
-                    {option.text}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {!quizCompleted && (
-              <div className="mt-4 d-flex justify-content-end">
-                <button 
-                  className="btn btn-primary me-2"
-                  onClick={handleNextQuestion}
-                  disabled={!selectedAnswers[question.id]} // Disable if no answer selected
-                >
-                  Next Question
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
+                    <CSSTransition
+                        in={showResults}
+                        timeout={300}
+                        classNames="results"
+                        unmountOnExit
+                    >
+                        <div className="results">
+                            <h3>Quiz Results</h3>
+                            <p>You got {correctAnswers} out of {quizData.questions.length} correct.</p>
+                            {!showCertificate && (
+                                <Button variant="info" onClick={generateCertificate} className="mt-3">
+                                    Generate Certificate
+                                </Button>
+                            )}
+                        </div>
+                    </CSSTransition>
 
-      {/* Quiz completion message and submit button */}
-      {quizCompleted && (
-        <div className="card mb-4">
-          <div className="card-body text-center">
-            <h5 className="card-title">Quiz Completed!</h5>
-            <p className="card-text">You have completed all questions.</p>
-            <button 
-              className="btn btn-success"
-              onClick={handleSubmitQuiz}
-            >
-              Submit Quiz
-            </button>
-          </div>
-        </div>
-      )}
+                    {showCertificate && (
+                        <div className="certificate-download">
+                            <PDFDownloadLink
+                                document={<CertificateTemplate name={userName} course={courseName} />}
+                                fileName="certificate.pdf"
+                            >
+                                {({ blob, url, loading, error }) => (loading ? 'Generating PDF...' : 'Download Certificate')}
+                            </PDFDownloadLink>
+                        </div>
+                    )}
 
-      {/* Progress bar */}
-      <div className="progress mb-4">
-        <div
-          className="progress-bar"
-          role="progressbar"
-          style={{ width: `${((currentQuestion + 1) / quiz.questions.length) * 100}%` }}
-          aria-valuenow={((currentQuestion + 1) / quiz.questions.length) * 100}
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          {currentQuestion + 1} / {quiz.questions.length}
-        </div>
-      </div>
-    </div>
-  );
+                    <div className="mt-3">
+                        <p><strong>Instructions:</strong> This quiz must be completed within {quizDuration} minutes.</p>
+                    </div>
+                </Card.Body>
+            </Card>
+        </Container>
+    );
 };
 
 export default QuizPage;
