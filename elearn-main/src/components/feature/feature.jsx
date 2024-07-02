@@ -7,23 +7,23 @@ const Feature = () => {
   const featureData = [
     {
       title: 'Quick Learning',
-      desc: 'We are a dedicated team committed to delivering top-notch projects that meet the highest standards of quality and excellence.',
-      icon: 'ri-draft-line'
+      desc: 'Our courses are designed to help you learn quickly and effectively, so you can achieve your goals in a shorter time frame.',
+      icon: 'ri-lightbulb-flash-line'
     },
     {
       title: 'Certification',
-      desc: 'We are a dedicated team committed to delivering top-notch projects that meet the highest standards of quality and excellence.',
-      icon: 'ri-contacts-book-line'
+      desc: 'Our courses are designed to help you gain valuable skills and earn certificates that are recognized and respected in the industry.',
+      icon: 'ri-award-line'
     },
     {
       title: 'Learn from experts',
-      desc: 'We are a dedicated team committed to delivering top-notch projects that meet the highest standards of quality and excellence.',
-      icon: 'ri-contacts-book-line'
+      desc: 'Our courses are taught by experienced professionals who are leaders in their fields. Discover how learning from the best can help you achieve your goals.',
+      icon: 'ri-user-star-line'
     },
     {
       title: 'Flexible schedule',
-      desc: 'We are a dedicated team committed to delivering top-notch projects that meet the highest standards of quality and excellence.',
-      icon: 'ri-contacts-book-line'
+      desc: 'Our e-learning platform is designed to fit into your busy life. Discover how our flexible schedule options make learning convenient and effective.',
+      icon: 'ri-calendar-check-line'
     }
   ];
 

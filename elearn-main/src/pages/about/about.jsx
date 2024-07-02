@@ -10,12 +10,13 @@ const AboutUs = () => {
         <div className="col-md-6">
           <div className="about-us-content animate__animated animate__fadeInLeft">
             <h2 className="display-4">Welcome to Learners</h2>
-            <p className="lead">
-              Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit.
-            </p>
-            <p className="lead">
-              Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet.
-            </p>
+            <p>
+          Welcome to E-Learning, where we are dedicated to providing high-quality educational resources and courses. Our mission is to empower learners of all ages by offering a diverse range of learning materials and expert instruction.
+        </p>
+        <p>
+          At E-Learning, we believe that education should be accessible, engaging, and effective. Our team of experienced educators and industry professionals is committed to delivering top-notch content that helps you achieve your learning goals.
+        </p>
+        
             <div className="row">
               <div className="col-md-6">
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Skilled Instructors</h5>
@@ -23,9 +24,9 @@ const AboutUs = () => {
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> International Certificate</h5>
               </div>
               <div className="col-md-6">
-                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Skilled Instructors</h5>
-                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Online Classes</h5>
-                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> International Certificate</h5>
+                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Flexible Learning Options</h5>
+                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Interactive Learning Experience</h5>
+                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Affordable Pricing</h5>
               </div>
             </div>
             <Link to="/instructors" className="btn btn-primary mt-4">Meet Our Instructors</Link>
