@@ -1,5 +1,3 @@
-// CourseDetail.js
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getDatabase, ref, set, push, onValue } from "firebase/database";
@@ -11,8 +9,9 @@ import InstructorDetails from './components/InstructorDetails';
 import Reviews from './components/Reviews';
 import ModuleNavigation from './components/ModuleNavigation';
 import VideoPlayer from './components/VideoPlayer'; // Import VideoPlayer component
+import { useAuth } from '../authprovider'; // Import useAuth hook from AuthProvider
 
-const CourseDetail = ({ userName, userEmail }) => {
+const CourseDetail = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
   const [rating, setRating] = useState(0);
@@ -20,6 +19,7 @@ const CourseDetail = ({ userName, userEmail }) => {
   const [reviews, setReviews] = useState([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [error, setError] = useState(null); // State for error feedback
+  const { currentUser } = useAuth(); // Get currentUser from useAuth hook
 
   useEffect(() => {
     const fetchCourse = () => {
@@ -56,15 +56,18 @@ const CourseDetail = ({ userName, userEmail }) => {
   const handleReviewSubmit = (e) => {
     e.preventDefault();
     const comment = e.target.comment.value;
-    if (rating && comment && userEmail && id) {
+    if (rating && comment && currentUser.email && id) {
       const db = getDatabase();
       const reviewsRef = ref(db, `user/courses/${id}/reviews`);
       const newReviewRef = push(reviewsRef);
+      const reviewerName = currentUser.displayName;
+      const reviewerEmail = currentUser.email;
+  
       set(newReviewRef, {
         rating,
         comment,
-        reviewerName: userName || "Anonymous",
-        reviewerEmail: userEmail || "anonymous@example.com"
+        reviewerName,
+        reviewerEmail,
       })
       .then(() => {
         console.log('Review submitted successfully');
@@ -81,23 +84,10 @@ const CourseDetail = ({ userName, userEmail }) => {
       setError('Please fill in all required fields.'); // Set error message for UI feedback
     }
   };
+  
 
   const handleModuleChange = (index) => {
     setCurrentModuleIndex(index);
-  };
-
-  const handleEnroll = (userId, courseId) => {
-    const db = getDatabase();
-    const enrolledUsersRef = ref(db, `user/${courseId}/enrolled_users`);
-    set(enrolledUsersRef, {
-      [userId]: true
-    })
-      .then(() => {
-        console.log('User enrolled successfully');
-      })
-      .catch((error) => {
-        console.error("Error enrolling user:", error);
-      });
   };
 
   if (!course) {
@@ -115,7 +105,7 @@ const CourseDetail = ({ userName, userEmail }) => {
           <img src={ImgUrl} alt={title} className="img-fluid rounded shadow" />
         </div>
         <div className="col-md-6 animate__animated animate__fadeInRight">
-          <h1 className="display-4">{title}</h1>
+          <h1 className="display-6">{title}</h1>
           <p className="lead">Rating: {courseRating}</p>
           <p className='lead'>Total Modules: {totalModules}</p>
           <p className="h4">{price ? `$${price}` : 'Free'}</p>
@@ -124,10 +114,7 @@ const CourseDetail = ({ userName, userEmail }) => {
               to={{
                 pathname: `/enroll/${id}`,
                 state: {
-                  userName,
-                  userEmail,
                   courseId: id,
-                  handleEnroll: handleEnroll
                 }
               }}
               className="btn btn-primary enroll-button"
@@ -138,8 +125,6 @@ const CourseDetail = ({ userName, userEmail }) => {
               to={{
                 pathname: `/quiz/${id}`,
                 state: {
-                  userName,
-                  userEmail,
                   courseId: id,
                 }
               }}
@@ -157,7 +142,13 @@ const CourseDetail = ({ userName, userEmail }) => {
       </div>
       <div className="row">
         <div className="col-md-8 animate__animated animate__fadeInUp">
-          <CourseDescription title={title} description={description} modules={modules} />
+          <CourseDescription
+            title={title}
+            description={description}
+            modules={modules}
+            handleModuleChange={handleModuleChange}
+            currentModuleIndex={currentModuleIndex}
+          />
           <ModuleNavigation
             currentModule={currentModule}
             currentModuleIndex={currentModuleIndex}
@@ -174,8 +165,8 @@ const CourseDetail = ({ userName, userEmail }) => {
             setRating={setRating}
             hover={hover}
             setHover={setHover}
-            userName={userName}
-            userEmail={userEmail}
+            userName={currentUser.displayName}
+            userEmail={currentUser.email}
             courseId={id}
           />
           {error && <div className="alert alert-danger mt-3">{error}</div>}

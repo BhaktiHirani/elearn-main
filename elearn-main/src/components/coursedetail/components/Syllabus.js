@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 
-const CourseDescription = ({ title, description, modules, handleModuleChange, currentModuleIndex }) => {
+const Syllabus = ({ modules }) => {
+  const [currentModuleIndex, setCurrentModuleIndex] = useState(null);
+
   const createMarkup = (html) => {
     return { __html: DOMPurify.sanitize(html) };
   };
 
+  const handleModuleClick = (index) => {
+    setCurrentModuleIndex(index);
+  };
+
   return (
     <div>
-      <h2>{title}</h2>
-      <p dangerouslySetInnerHTML={createMarkup(description)}></p>
-      <h3>Modules</h3>
+      <h2>Syllabus</h2>
+      <hr />
       <ul className="list-group list-group-flush">
         {Array.isArray(modules) ? modules.map((module, index) => (
           <li key={index} className="list-group-item">
-            <h5 onClick={() => handleModuleChange(index)} style={{ cursor: 'pointer' }}>
+            <h5 onClick={() => handleModuleClick(index)} style={{ cursor: 'pointer' }}>
               {module.title}
             </h5>
             {currentModuleIndex === index && (
@@ -27,4 +32,4 @@ const CourseDescription = ({ title, description, modules, handleModuleChange, cu
   );
 };
 
-export default CourseDescription;
+export default Syllabus;

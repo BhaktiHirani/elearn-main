@@ -5,7 +5,8 @@ const InstructorDetails = ({ instructor }) => {
     instructor && (
       <div className="bg-light p-4 rounded shadow mb-4">
         <h2>Instructor</h2>
-        <div className="d-flex align-items-center">
+        <hr></hr>
+        <div className="d-flex align-items-left">
           <img src={instructor.photoUrl} alt={instructor.name} className="img-thumbnail rounded-circle me-3" style={{ width: '100px', height: '100px' }} />
           <div>
             <h5>{instructor.name}</h5>

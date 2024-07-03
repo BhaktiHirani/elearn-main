@@ -67,16 +67,23 @@ function Signup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       if (user) {
+        // Set display name in Firebase Authentication
+        await user.updateProfile({
+          displayName: fullName,
+        });
+
+        // Create user document in Firestore
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           fullname: fullName,
         });
+
+        console.log("User registered successfully");
+        toast.success("User Registered Successfully!", {
+          position: "top-center",
+        });
+        navigate('/login'); // Use navigate to redirect to the login page
       }
-      console.log("User registered successfully");
-      toast.success("User Registered Successfully!", {
-        position: "top-center",
-      });
-      navigate('/login'); // Use navigate to redirect to the login page
     } catch (error) {
       console.log(error.message);
       toast.error(error.message, {
@@ -158,16 +165,16 @@ function Signup() {
                     onChange={(e) => setAgreeToTerms(e.target.checked)}
                     required
                   />
-                  <label className="form-check-label" htmlFor="agreeToTerms" required>I agree to the Terms and Conditions</label>
+                  <label className="form-check-label" htmlFor="agreeToTerms">I agree to the Terms and Conditions</label>
                 </div>
                 <button 
-  type="submit" 
-  className="btn btn-primary w-100 custom-btn" 
-  disabled={!isFormValid()} 
-  style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e' }}
->
-  Sign Up
-</button>
+                  type="submit" 
+                  className="btn btn-primary w-100 custom-btn" 
+                  disabled={!isFormValid()} 
+                  style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e' }}
+                >
+                  Sign Up
+                </button>
               </form>
               <div className="mt-3 text-center">
                 Already have an account? <a href="/login">Login</a>

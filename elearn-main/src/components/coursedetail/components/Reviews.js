@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 const Reviews = ({ reviews, handleReviewSubmit, rating, setRating, hover, setHover }) => {
+  const [showAllReviews, setShowAllReviews] = useState(false);
+
+  const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 5);
+
   return (
     <div className="bg-light p-4 rounded shadow">
       <h2>Student Reviews</h2>
-      {reviews.length > 0 ? reviews.map((review, index) => (
+      <hr />
+      {displayedReviews.length > 0 ? displayedReviews.map((review, index) => (
         <div key={index} className="mb-3">
           <div className="d-flex justify-content-between">
             <span className="text-warning">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
@@ -15,6 +20,16 @@ const Reviews = ({ reviews, handleReviewSubmit, rating, setRating, hover, setHov
           <p>{review.comment}</p>
         </div>
       )) : <p>No reviews yet.</p>}
+      
+      {reviews.length > 5 && (
+        <button
+          className="btn btn-link p-0"
+          onClick={() => setShowAllReviews(!showAllReviews)}
+        >
+          {showAllReviews ? 'Show Less' : 'See All'}
+        </button>
+      )}
+
       <h3>Leave a Review</h3>
       <form onSubmit={handleReviewSubmit}>
         <label htmlFor="rating">Rating:</label>

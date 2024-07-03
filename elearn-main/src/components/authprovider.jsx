@@ -34,7 +34,7 @@ const AuthProvider = ({ children }) => {
       setCurrentUser(user);
       setLoading(false);
     });
-    return unsubscribe;
+    return unsubscribe; // Cleanup function to unsubscribe from the listener
   }, []);
 
   const value = {
@@ -45,7 +45,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {!loading && children} {/* Render children only when loading is false */}
     </AuthContext.Provider>
   );
 };
