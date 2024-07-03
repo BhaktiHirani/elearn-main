@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Element } from 'react-scroll';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './about.css';
 
 const AboutUs = () => {
   return (
+    
     <div className="container py-5">
       <div className="row align-items-center">
         <div className="col-md-6">

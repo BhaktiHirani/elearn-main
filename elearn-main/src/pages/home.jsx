@@ -1,10 +1,15 @@
+import React, { Fragment, useEffect, useState } from 'react';
+import { getDatabase, ref, onValue } from 'firebase/database';
+import { Element } from 'react-scroll';
 import Courses from '../components/coursessection/courses';
 import Feature from '../components/feature/feature';
 import Herosection from '../components/herosection/herosection';
 import Instruction from '../components/instruction/instruction';
-import React, { Fragment, useEffect, useState } from 'react';
-import { getDatabase, ref, onValue } from 'firebase/database';
+import Instructor from '../components/instructor/instructor';
 import AboutUs from './about/about';
+
+
+
 const Home = () => {
   const [topRatedCourses, setTopRatedCourses] = useState([]);
 
@@ -34,7 +39,6 @@ const Home = () => {
             const top3Courses = sortedCourses.slice(0, 3);
             console.log('Top 3 courses:', top3Courses); // Log top 3 courses
 
-
             // Set the top-rated courses state
             setTopRatedCourses(top3Courses);
           }
@@ -49,11 +53,24 @@ const Home = () => {
 
   return (
     <Fragment>
-      <Herosection />
-      <AboutUs />
-      <Courses courses={topRatedCourses} limit={3} showSearchBar={false}/>
-      <Feature />
-      <Instruction />
+      <Element name="home">
+        <Herosection />
+      </Element>
+      <Element name="about" >
+        <AboutUs />
+      </Element>
+      <Element name="courses">
+        <Courses courses={topRatedCourses} limit={3} showSearchBar={false} />
+      </Element>
+      <Element name="instructors">
+        <Instructor />
+      </Element>
+      <Element name="features">
+        <Feature />
+      </Element>
+      <Element name="instructions">
+        <Instruction />
+      </Element>
     </Fragment>
   );
 };
