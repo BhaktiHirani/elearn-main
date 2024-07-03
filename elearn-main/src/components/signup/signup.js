@@ -67,23 +67,16 @@ function Signup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       if (user) {
-        // Set display name in Firebase Authentication
-        await user.updateProfile({
-          displayName: fullName,
-        });
-
-        // Create user document in Firestore
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           fullname: fullName,
         });
-
-        console.log("User registered successfully");
-        toast.success("User Registered Successfully!", {
-          position: "top-center",
-        });
-        navigate('/login'); // Use navigate to redirect to the login page
       }
+      console.log("User registered successfully");
+      toast.success("User Registered Successfully!", {
+        position: "top-center",
+      });
+      navigate('/login'); // Use navigate to redirect to the login page
     } catch (error) {
       console.log(error.message);
       toast.error(error.message, {
@@ -99,7 +92,7 @@ function Signup() {
 
   return (
     <div className="container-fluid vh-100 d-flex justify-content-center align-items-center">
-      <div className="card p-4 animate__animated animate__fadeIn" style={{ backgroundSize: 'cover' }}>
+      <div className="card p-4 animate_animated animate_fadeIn" style={{ backgroundSize: 'cover' }}>
         <div className="row">
           <div className="col-md-6 d-flex align-items-center justify-content-center">
             <img src={'https://asset.gecdesigns.com/img/background-templates/isometric-e-learning-background-template-1612282245987-cover.webp'} alt="Background" className="img-fluid" />
@@ -165,16 +158,16 @@ function Signup() {
                     onChange={(e) => setAgreeToTerms(e.target.checked)}
                     required
                   />
-                  <label className="form-check-label" htmlFor="agreeToTerms">I agree to the Terms and Conditions</label>
+                  <label className="form-check-label" htmlFor="agreeToTerms" required>I agree to the Terms and Conditions</label>
                 </div>
                 <button 
-                  type="submit" 
-                  className="btn btn-primary w-100 custom-btn" 
-                  disabled={!isFormValid()} 
-                  style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e' }}
-                >
-                  Sign Up
-                </button>
+  type="submit" 
+  className="btn btn-primary w-100 custom-btn" 
+  disabled={!isFormValid()} 
+  style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e' }}
+>
+  Sign Up
+</button>
               </form>
               <div className="mt-3 text-center">
                 Already have an account? <a href="/login">Login</a>

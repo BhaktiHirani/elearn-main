@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import './instruction.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
 
 const Instruction = () => {
   useEffect(() => {
@@ -32,7 +34,10 @@ const Instruction = () => {
   return (
     <section>
       <div className="container">
-        <h2 className="text-center mb-5">How It Works?</h2>
+        <h2 className="text-center mb-4">How It Works?</h2>
+        <div className="text-center mb-4">
+      <FontAwesomeIcon icon={faBookOpen} className="book-icon" style={{ color: '#17bf9e' }} />
+      </div>
         <div className="row justify-content-center">
           <div className="col-lg-4 col-md-6 mb-4">
             <div className="card h-100 text-center step">

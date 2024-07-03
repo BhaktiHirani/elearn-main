@@ -1,18 +1,20 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import './feature.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
 
 const Feature = () => {
 
   const featureData = [
     {
       title: 'Quick Learning',
-      desc: 'Our courses are designed to help you learn quickly and effectively, so you can achieve your goals in a shorter time frame.',
+      desc: 'Our courses are designed to provide a comprehensive learning experience that enables you to grasp complex concepts quickly and effectively.',
       icon: 'ri-lightbulb-flash-line'
     },
     {
       title: 'Certification',
-      desc: 'Our courses are designed to help you gain valuable skills and earn certificates that are recognized and respected in the industry.',
+      desc: 'Our courses are meticulously designed to help you gain valuable skills and earn certificates that are recognized and respected in the industry fields further.',
       icon: 'ri-award-line'
     },
     {
@@ -31,6 +33,9 @@ const Feature = () => {
     <section className="py-5">
       <Container>
         <h2 className="text-center mb-4">What are the benefits?</h2>
+        <div className="text-center mb-4">
+      <FontAwesomeIcon icon={faBookOpen} className="book-icon" style={{ color: '#17bf9e' }} />
+      </div>
         <Row xs="1" md="2" lg="4" className="g-4">
           {
             featureData.map((item, index) => (

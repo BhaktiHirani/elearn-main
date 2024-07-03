@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Element } from 'react-scroll';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './about.css';
 
@@ -27,7 +26,7 @@ const AboutUs = () => {
               </div>
               <div className="col-md-6">
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Flexible Learning Options</h5>
-                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Interactive Learning Experience</h5>
+                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Interactive Learning</h5>
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Affordable Pricing</h5>
               </div>
             </div>

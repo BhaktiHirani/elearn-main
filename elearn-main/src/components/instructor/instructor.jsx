@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '../../firebase';
 import './instructor.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
 
 const Instructors = () => {
   const [instructors, setInstructors] = useState([]);
@@ -37,30 +39,30 @@ const Instructors = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
- 
   return (
-    <div className="container py-5">
-    <h2 className="text-center mb-4">Expert Instructors</h2>
-    <div className="row gy-4">
-      {instructors.map((instructor, index) => (
-        <div className="col-lg-3 col-md-4 col-sm-6" key={index}>
-          <div className="card text-center instructor-card">
-            <img 
-              src={instructor.image} 
-              className="card-img-top rounded-circle instructor-image" 
-              alt={instructor.name} 
-            />
-            <div className="card-body">
-              <h5 className="card-title">{instructor.name}</h5>
-              <p className="card-text">{instructor.designation}</p>
+    <div className="container py-4">
+      <h2 className="text-center mb-4">Expert Instructors</h2>
+      <div className="text-center mb-4">
+      <FontAwesomeIcon icon={faBookOpen} className="book-icon" style={{ color: '#17bf9e' }} />
+      </div>
+      <div className="row gy-4">
+        {instructors.map((instructor, index) => (
+          <div className="col-lg-3 col-md-4 col-sm-6" key={index}>
+            <div className="card text-center instructor-card">
+              <img 
+                src={instructor.image} 
+                className="card-img-top rounded-circle instructor-image" 
+                alt={instructor.name} 
+              />
+              <div className="card-body">
+                <h5 className="card-title">{instructor.name}</h5>
+                <p className="card-text">{instructor.designation}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-  
-
   );
 };
 

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getDatabase, ref, set, push, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, push, set } from 'firebase/database';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './coursedetail.css';
 
 import CourseDescription from './components/CourseDescription';
 import InstructorDetails from './components/InstructorDetails';
 import Reviews from './components/Reviews';
+import CourseSchedule from './components/CourseSchedule'; // Import CourseSchedule component
 import ModuleNavigation from './components/ModuleNavigation';
 import VideoPlayer from './components/VideoPlayer'; // Import VideoPlayer component
 import { useAuth } from '../authprovider'; // Import useAuth hook from AuthProvider
@@ -19,6 +20,7 @@ const CourseDetail = () => {
   const [reviews, setReviews] = useState([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [error, setError] = useState(null); // State for error feedback
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const { currentUser } = useAuth(); // Get currentUser from useAuth hook
 
   useEffect(() => {
@@ -38,20 +40,30 @@ const CourseDetail = () => {
       const reviewsRef = ref(db, `user/courses/${id}/reviews`);
       onValue(reviewsRef, (snapshot) => {
         const reviewsData = snapshot.val();
-        if (reviewsData) {
-          const reviewsArray = Object.values(reviewsData);
-          setReviews(reviewsArray);
-        } else {
-          setReviews([]);
-        }
+        const reviewsArray = reviewsData ? Object.values(reviewsData) : [];
+        setReviews(reviewsArray);
       }, (error) => {
         console.error('Error fetching reviews:', error);
       });
     };
 
+    const checkEnrollment = () => {
+      if (currentUser) {
+        const db = getDatabase();
+        const enrolledUsersRef = ref(db, `user/courses/${id}/enrolled_users`);
+        onValue(enrolledUsersRef, (snapshot) => {
+          const enrolledUsers = snapshot.val();
+          setIsEnrolled(enrolledUsers && enrolledUsers[currentUser.uid]);
+        }, (error) => {
+          console.error('Error checking enrollment:', error);
+        });
+      }
+    };
+
     fetchCourse();
     fetchReviews();
-  }, [id]);
+    checkEnrollment();
+  }, [id, currentUser]);
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
@@ -84,7 +96,6 @@ const CourseDetail = () => {
       setError('Please fill in all required fields.'); // Set error message for UI feedback
     }
   };
-  
 
   const handleModuleChange = (index) => {
     setCurrentModuleIndex(index);
@@ -94,7 +105,7 @@ const CourseDetail = () => {
     return <div className="error">Course not found</div>;
   }
 
-  const { title, ImgUrl, rating: courseRating, price, mediaUrl, description, modules, instructor } = course;
+  const { title, ImgUrl, rating: courseRating, price, mediaUrl, description, modules, instructor, schedule } = course;
   const currentModule = modules && modules[currentModuleIndex];
   const totalModules = modules ? modules.length : 0;
 
@@ -110,24 +121,16 @@ const CourseDetail = () => {
           <p className='lead'>Total Modules: {totalModules}</p>
           <p className="h4">{price ? `$${price}` : 'Free'}</p>
           <div className="button-container mt-3">
+            {!isEnrolled && (
+              <Link
+                to={`/enroll/${id}`}
+                className="btn btn-primary enroll-button"
+              >
+                Enroll Now
+              </Link>
+            )}
             <Link
-              to={{
-                pathname: `/enroll/${id}`,
-                state: {
-                  courseId: id,
-                }
-              }}
-              className="btn btn-primary enroll-button"
-            >
-              Enroll Now
-            </Link>
-            <Link
-              to={{
-                pathname: `/quiz/${id}`,
-                state: {
-                  courseId: id,
-                }
-              }}
+              to={`/quiz/${id}`}
               className="btn btn-primary enroll-button"
             >
               Quiz
@@ -140,6 +143,7 @@ const CourseDetail = () => {
           <VideoPlayer mediaUrl={mediaUrl} title={title} />
         </div>
       </div>
+     
       <div className="row">
         <div className="col-md-8 animate__animated animate__fadeInUp">
           <CourseDescription

@@ -1,4 +1,3 @@
-// Profile Component
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../authprovider'; // Import useAuth hook from AuthProvider
 import { db } from "../../firebase";

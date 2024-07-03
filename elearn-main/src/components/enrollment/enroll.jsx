@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getDatabase, ref, update, onValue } from "firebase/database";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
@@ -9,6 +9,7 @@ import './enroll.css';
 
 const EnrollmentForm = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [course, setCourse] = useState('');
@@ -93,6 +94,9 @@ const EnrollmentForm = () => {
             });
 
             setSubmitted(true);
+            setTimeout(() => {
+                navigate(`/course/${id}`);
+            }, 2000);
         } catch (error) {
             console.error('Error enrolling user:', error);
             alert(`Error enrolling user: ${error.message}`);

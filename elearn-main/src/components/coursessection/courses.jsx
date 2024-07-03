@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Butt
 import { getDatabase, ref, onValue } from 'firebase/database';
 import { Link, useNavigate } from 'react-router-dom';
 import './course.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
 
 const Courses = ({ limit, showSearchBar }) => {
   const [courseData, setCourseData] = useState([]);
@@ -52,6 +54,9 @@ const Courses = ({ limit, showSearchBar }) => {
     <section className="py-5">
       <Container>
         <h2 className="text-center mb-4">Our Popular Courses</h2>
+        <div className="text-center mb-4">
+      <FontAwesomeIcon icon={faBookOpen} className="book-icon" style={{ color: '#17bf9e' }} />
+      </div>
         {showSearchBar ? (
           <Form className="mb-4">
             <Row className="align-items-center">
@@ -88,11 +93,7 @@ const Courses = ({ limit, showSearchBar }) => {
                       {item.student}K Students | {item.rating}K Ratings
                     </CardText>
                     <div className="d-flex justify-content-end">
-                    <Button color="primary" className="me-2">
-  <Link to={`/enroll/${item.id}`} className="text-decoration-none text-light">
-    Enroll Now
-  </Link>
-</Button>                     
+                                  
                       <Button color="secondary">
   <Link to={`/course/${item.id}`} className="text-decoration-none text-light">
     Read More
