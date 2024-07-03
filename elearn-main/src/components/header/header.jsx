@@ -2,11 +2,12 @@ import React from 'react';
 import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../authprovider'; // Correct path to authprovider
+import { Link as ScrollLink } from 'react-scroll'; // Import ScrollLink for smooth scroll
 
 const navLinks = [
   { display: 'Home', url: '/' },
-  { display: 'Courses', url: '/courses' },
-  { display: 'About', url: '/about' },
+  { display: 'Courses', url: 'courses' }, // Updated URL for ScrollLink functionality
+  { display: 'About', url: 'about' }, 
   { display: 'Contact Us', url: '/contact' },
 ];
 
@@ -32,9 +33,45 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             {navLinks.map((item, index) => (
-              <Nav.Link key={index} as={Link} to={item.url}>
-                {item.display}
-              </Nav.Link>
+              item.url === 'about' ? (
+                <ScrollLink 
+                  key={index} 
+                  to="about" 
+                  smooth={true} 
+                  duration={500} 
+                  className="navbar-link"
+                  style={{ 
+                    color: '#3D3D3D', // Ensure text color matches
+                    padding: '0.5rem 1rem', // Ensure padding matches
+                    textDecoration: 'none', // Ensure text decoration matches
+                    fontSize: '1rem', // Ensure font size matches
+                  }}
+                  aria-label="Go to About Us"
+                >
+                  {item.display}
+                </ScrollLink>
+              ) : item.url === 'courses' ? (
+                <ScrollLink 
+                  key={index} 
+                  to="courses" 
+                  smooth={true} 
+                  duration={500} 
+                  className="navbar-link"
+                  style={{ 
+                    color: '#3D3D3D', // Ensure text color matches
+                    padding: '0.5rem 1rem', // Ensure padding matches
+                    textDecoration: 'none', // Ensure text decoration matches
+                    fontSize: '1rem', // Ensure font size matches
+                  }}
+                  aria-label="Go to Courses"
+                >
+                  {item.display}
+                </ScrollLink>
+              ) : (
+                <Nav.Link key={index} as={Link} to={item.url}>
+                  {item.display}
+                </Nav.Link>
+              )
             ))}
           </Nav>
           <Nav>
@@ -46,9 +83,9 @@ const Header = () => {
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <>
-                <Nav.Link as={Link} to="/login">
-                <Button variant='success' style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e', color: '#fff' }}>Login</Button>
+              <>                
+              <Nav.Link as={Link} to="/login">
+                  <Button variant='success' style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e', color: '#fff' }}>Login</Button>
                 </Nav.Link>
                 <Nav.Link as={Link} to="/signup">
                   <Button variant="success" style={{ backgroundColor: '#17bf9e', borderColor: '#17bf9e', color: '#fff' }}>SignUp</Button>
