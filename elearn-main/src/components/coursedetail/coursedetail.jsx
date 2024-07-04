@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { getDatabase, ref, onValue, push, set } from 'firebase/database';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getDatabase, ref, onValue,push,set } from 'firebase/database';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './coursedetail.css';
 
 import CourseDescription from './components/CourseDescription';
 import InstructorDetails from './components/InstructorDetails';
 import Reviews from './components/Reviews';
-import CourseSchedule from './components/CourseSchedule'; // Import CourseSchedule component
 import ModuleNavigation from './components/ModuleNavigation';
-import VideoPlayer from './components/VideoPlayer'; // Import VideoPlayer component
-import { useAuth } from '../authprovider'; // Import useAuth hook from AuthProvider
+import VideoPlayer from './components/VideoPlayer';
+import { useAuth } from '../authprovider';
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -19,17 +18,32 @@ const CourseDetail = () => {
   const [hover, setHover] = useState(0);
   const [reviews, setReviews] = useState([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
-  const [error, setError] = useState(null); // State for error feedback
+  const [averageRating, setAverageRating] = useState(0);
+  const [error, setError] = useState(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const { currentUser } = useAuth(); // Get currentUser from useAuth hook
+  const [progress, setProgress] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [resources, setResources] = useState([]); // State for resources
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
+
     const fetchCourse = () => {
       const db = getDatabase();
       const courseRef = ref(db, `user/courses/${id}`);
       onValue(courseRef, (snapshot) => {
         const data = snapshot.val();
         setCourse(data);
+        if (data && data.modules) {
+          const totalModules = data.modules.length;
+          const completedModules = data.modules.filter(module => module.completed).length;
+          setProgress((completedModules / totalModules) * 100);
+        }
       }, (error) => {
         console.error('Error fetching course:', error);
       });
@@ -42,9 +56,53 @@ const CourseDetail = () => {
         const reviewsData = snapshot.val();
         const reviewsArray = reviewsData ? Object.values(reviewsData) : [];
         setReviews(reviewsArray);
+        if (reviewsArray.length > 0) {
+          const totalRating = reviewsArray.reduce((sum, review) => sum + review.rating, 0);
+          const avgRating = totalRating / reviewsArray.length;
+          setAverageRating(avgRating.toFixed(1));
+        } else {
+          setAverageRating(0);
+        }
       }, (error) => {
         console.error('Error fetching reviews:', error);
       });
+    };
+
+    const fetchQuestions = () => {
+      const db = getDatabase();
+      const questionsRef = ref(db, `user/courses/${id}/questions`);
+      onValue(questionsRef, (snapshot) => {
+        const questionsData = snapshot.val();
+        const questionsArray = questionsData ? Object.values(questionsData) : [];
+        setQuestions(questionsArray);
+      }, (error) => {
+        console.error('Error fetching questions:', error);
+      });
+    };
+
+    const fetchResources = () => {
+      const db = getDatabase();
+      const resourcesRef = ref(db, `user/courses/${id}/resources`);
+      onValue(resourcesRef, (snapshot) => {
+        const resourcesData = snapshot.val();
+        const resourcesArray = resourcesData ? Object.values(resourcesData) : [];
+        setResources(resourcesArray);
+      }, (error) => {
+        console.error('Error fetching resources:', error);
+      });
+    };
+
+    const fetchProgress = () => {
+      if (currentUser) {
+        const db = getDatabase();
+        const progressRef = ref(db, `user/courses/${id}/progress/${currentUser.uid}`);
+        onValue(progressRef, (snapshot) => {
+          const data = snapshot.val();
+          setProgress(data || 0);
+        }, (error) => {
+          console.error('Error fetching progress:', error);
+        });
+      }
     };
 
     const checkEnrollment = () => {
@@ -62,8 +120,11 @@ const CourseDetail = () => {
 
     fetchCourse();
     fetchReviews();
+    fetchQuestions();
+    fetchResources();
     checkEnrollment();
-  }, [id, currentUser]);
+    fetchProgress();
+  }, [id, currentUser, navigate]);
 
   const handleReviewSubmit = (e) => {
     e.preventDefault();
@@ -72,7 +133,7 @@ const CourseDetail = () => {
       const db = getDatabase();
       const reviewsRef = ref(db, `user/courses/${id}/reviews`);
       const newReviewRef = push(reviewsRef);
-      const reviewerName = currentUser.displayName;
+      const reviewerName = currentUser.displayName || 'Unknown User';
       const reviewerEmail = currentUser.email;
   
       set(newReviewRef, {
@@ -83,18 +144,73 @@ const CourseDetail = () => {
       })
       .then(() => {
         console.log('Review submitted successfully');
-        setRating(0); // Reset rating after submission
+        setRating(0);
         setError(null);
       })
       .catch((error) => {
         console.error('Error submitting review:', error);
-        setError('Error submitting review. Please try again later.'); // Set error message for UI feedback
+        setError('Error submitting review. Please try again later.');
       });
       e.target.reset();
     } else {
       console.error('Missing required fields for review submission');
-      setError('Please fill in all required fields.'); // Set error message for UI feedback
+      setError('Please fill in all required fields.');
     }
+  };
+
+  const handleQuestionSubmit = (e) => {
+    e.preventDefault();
+    const question = e.target.question.value;
+    if (question && currentUser.email && id) {
+      const db = getDatabase();
+      const questionsRef = ref(db, `user/courses/${id}/questions`);
+      const newQuestionRef = push(questionsRef);
+      const askerName = currentUser.displayName || 'Unknown User';
+      const askerEmail = currentUser.email;
+  
+      set(newQuestionRef, {
+        question,
+        askerName,
+        askerEmail,
+        answer: null,
+      })
+      .then(() => {
+        console.log('Question submitted successfully');
+        e.target.reset();
+      })
+      .catch((error) => {
+        console.error('Error submitting question:', error);
+        setError('Error submitting question. Please try again later.');
+      });
+    } else {
+      console.error('Missing required fields for question submission');
+      setError('Please fill in all required fields.');
+    }
+  };
+
+  const handleModuleComplete = (index) => {
+    const updatedModules = [...modules];
+    updatedModules[index].completed = true;
+    setCourse((prevCourse) => ({
+      ...prevCourse,
+      modules: updatedModules,
+    }));
+
+    const completedModules = updatedModules.filter(module => module.completed).length;
+    const totalModules = updatedModules.length;
+    const newProgress = (completedModules / totalModules) * 100;
+
+    setProgress(newProgress);
+
+    const db = getDatabase();
+    const progressRef = ref(db, `user/courses/${id}/progress/${currentUser.uid}`);
+    set(progressRef, newProgress)
+      .then(() => {
+        console.log('Progress updated successfully');
+      })
+      .catch((error) => {
+        console.error('Error updating progress:', error);
+      });
   };
 
   const handleModuleChange = (index) => {
@@ -105,7 +221,7 @@ const CourseDetail = () => {
     return <div className="error">Course not found</div>;
   }
 
-  const { title, ImgUrl, rating: courseRating, price, mediaUrl, description, modules, instructor, schedule } = course;
+  const { title, ImgUrl, price, mediaUrl, description, modules, instructor } = course;
   const currentModule = modules && modules[currentModuleIndex];
   const totalModules = modules ? modules.length : 0;
 
@@ -117,7 +233,7 @@ const CourseDetail = () => {
         </div>
         <div className="col-md-6 animate__animated animate__fadeInRight">
           <h1 className="display-6">{title}</h1>
-          <p className="lead">Rating: {courseRating}</p>
+          <p className="lead">Rating: {averageRating}</p>
           <p className='lead'>Total Modules: {totalModules}</p>
           <p className="h4">{price ? `$${price}` : 'Free'}</p>
           <div className="button-container mt-3">
@@ -136,6 +252,18 @@ const CourseDetail = () => {
               Quiz
             </Link>
           </div>
+          <div className="progress my-3">
+            <div
+              className="progress-bar"
+              role="progressbar"
+              style={{ width: `${progress}%` }}
+              aria-valuenow={progress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              {progress}%
+            </div>
+          </div>
         </div>
       </div>
       <div className="row mb-4">
@@ -143,7 +271,6 @@ const CourseDetail = () => {
           <VideoPlayer mediaUrl={mediaUrl} title={title} />
         </div>
       </div>
-     
       <div className="row">
         <div className="col-md-8 animate__animated animate__fadeInUp">
           <CourseDescription
@@ -152,6 +279,7 @@ const CourseDetail = () => {
             modules={modules}
             handleModuleChange={handleModuleChange}
             currentModuleIndex={currentModuleIndex}
+            handleModuleComplete={handleModuleComplete}
           />
           <ModuleNavigation
             currentModule={currentModule}
@@ -174,6 +302,40 @@ const CourseDetail = () => {
             courseId={id}
           />
           {error && <div className="alert alert-danger mt-3">{error}</div>}
+          <div className="qa-section mt-5">
+            <h3>Questions & Answers</h3>
+            <form onSubmit={handleQuestionSubmit}>
+              <div className="form-group">
+                <label htmlFor="question">Ask the Instructor</label>
+                <textarea className="form-control" id="question" rows="3"></textarea>
+              </div>
+              <br></br>
+              <button type="submit" className="btn btn-primary">Submit</button>
+            </form>
+            <div className="mt-4">
+              {questions.map((q, index) => (
+                <div key={index} className="question">
+                  <p><strong>{q.askerName}</strong>: {q.question}</p>
+                  <p><em>{q.answer ? `Instructor: ${q.answer}` : 'Awaiting response...'}</em></p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="resource-section mt-5">
+            <h3>Supplementary Resources</h3>
+            {/* Display fetched resources */}
+            {resources.length > 0 ? (
+              <ul className="list-group mt-3">
+                {resources.map((resource, index) => (
+                  <li key={index} className="list-group-item">
+                    <a href={resource.url} target="_blank" rel="noopener noreferrer">{resource.title}</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No supplementary resources available.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

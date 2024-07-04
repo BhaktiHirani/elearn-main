@@ -30,25 +30,31 @@ const Reviews = ({ reviews, handleReviewSubmit, rating, setRating, hover, setHov
         </button>
       )}
 
-      <h3>Leave a Review</h3>
-      <form onSubmit={handleReviewSubmit}>
-        <label htmlFor="rating">Rating:</label>
-        <div className="star-rating">
-          {Array.from({ length: 5 }, (_, i) => (
-            <button
-              type="button"
-              key={i}
-              className={`btn btn-link p-0 ${i < (hover || rating) ? 'text-warning' : 'text-muted'}`}
-              onClick={() => setRating(i + 1)}
-              onMouseEnter={() => setHover(i + 1)}
-              onMouseLeave={() => setHover(rating)}
-            >
-              <FontAwesomeIcon icon={faStar} />
-            </button>
-          ))}
+      <h3 className="mt-4">Leave a Review</h3>
+      <form onSubmit={handleReviewSubmit} className="mt-3">
+        <div className="form-group">
+          <label htmlFor="rating">Rating:</label>
+          <div className="star-rating">
+            {Array.from({ length: 5 }, (_, i) => (
+              <button
+                type="button"
+                key={i}
+                className={`btn btn-link p-0 ${i < (hover || rating) ? 'text-warning' : 'text-muted'}`}
+                onClick={() => setRating(i + 1)}
+                onMouseEnter={() => setHover(i + 1)}
+                onMouseLeave={() => setHover(rating)}
+              >
+                <FontAwesomeIcon icon={faStar} />
+              </button>
+            ))}
+          </div>
         </div>
-        <label htmlFor="comment">Comment:</label>
-        <textarea id="comment" name="comment" rows="4"></textarea>
+        
+        <div className="form-group">
+          <label htmlFor="comment">Comment:</label>
+          <textarea id="comment" name="comment" className="form-control" rows="4"></textarea>
+        </div>
+        
         <button type="submit" className="btn btn-primary">Submit Review</button>
       </form>
     </div>

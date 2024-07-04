@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase'; // Adjust the path as necessary
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -30,7 +31,17 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
+    const unsubscribe = auth.onAuthStateChanged(async user => {
+      if (user && !user.displayName) {
+        // If user is logged in but does not have displayName, fetch from Firestore
+        const db = getFirestore();
+        const userDocRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          user.displayName = userData.fullname || 'Unknown User';
+        }
+      }
       setCurrentUser(user);
       setLoading(false);
     });
