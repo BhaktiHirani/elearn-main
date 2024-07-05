@@ -62,11 +62,11 @@ const Home = () => {
       <Element name="courses">
         <Courses courses={topRatedCourses} limit={3} showSearchBar={false} />
       </Element>
-      <Element name="instructors">
-        <Instructor />
-      </Element>
       <Element name="features">
         <Feature />
+      </Element>
+      <Element name="instructors">
+        <Instructor />
       </Element>
       <Element name="instructions">
         <Instruction />

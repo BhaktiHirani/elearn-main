@@ -2,8 +2,8 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Link } from 'react-router-dom';
+import '../../components/signup/signup.css'; // Importing the same CSS file as Signup
 
 function Login({ onLoginSuccess }) {
 
@@ -35,72 +35,85 @@ function Login({ onLoginSuccess }) {
     }
     setErrors({});
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in Successfully!");
-      
-          onLoginSuccess(); 
-      
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      if (user) {
+        console.log("User logged in Successfully!");
+        onLoginSuccess();
+      } else {
+        // If user is not found, set error
+        setErrors({ general: 'User not found. Please check your email.' });
+      }
     } catch (error) {
-      toast.error(error.message, {
-        position: "bottom-center",
-      });
+      // Handle specific error codes
+      if (error.code === 'auth/user-not-found') {
+        setErrors({ general: 'User not found. Please check your email.' });
+      } else if (error.code === 'auth/wrong-password') {
+        setErrors({ password: 'Incorrect password. Please try again.' });
+      } else {
+        setErrors({ general: 'Login failed. Please try again later.' });
+      }
     }
   };
 
   return (
-    <div className="container-fluid vh-100 d-flex justify-content-center align-items-center">
-      <div className="card p-4 animate__animated animate__fadeIn" style={{ backgroundSize: 'cover' }}>
-        <div className="row">
-          <div className="col-md-6 d-flex align-items-center justify-content-center">
-            <img src={'https://asset.gecdesigns.com/img/background-templates/isometric-e-learning-background-template-1612282245987-cover.webp'} alt="Background" className="img-fluid" />
-          </div>
-          <div className="col-md-6">
-            <div className="card-body">
-              <h2 className="card-title text-center mb-4">Welcome Back!</h2>
-              <div className="form-wrapper">
-                <form onSubmit={handleLogin}>
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
-                    <input
-                      type="email"
-                      className={`form-control ${errors.email && 'is-invalid'}`}
-                      id="email"
-                      placeholder="Enter Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input
-                      type="password"
-                      className={`form-control ${errors.password && 'is-invalid'}`}
-                      id="password"
-                      placeholder="Enter Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-                  </div>
-                  <button type="submit" className="btn btn-primary w-100">Login</button>
-                </form>
-              </div>
-              <div className="mt-3 text-center">
-                <a href="/forgotpassword">Forgot password?</a>
-              </div>
-              <div className="mt-3 text-center">
-                Don't have an account? <a href="/signup">Sign Up</a>
-              </div>
+    <div className="signup-container">
+      <div className="signup-card">
+        <div className="signup-image">
+          <img src="https://t3.ftcdn.net/jpg/01/68/60/76/360_F_168607659_evWV3Ab6ik9l0L1ihrjCaxYKEqxGNrbr.jpg" alt="Background" />
+        </div>
+        <div className="signup-form">
+          <h2 className="signup-title">Login</h2>
+          <form onSubmit={handleLogin}>
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">Email</label>
+              <input
+                type="email"
+                className={`form-control ${errors.email && 'is-invalid'}`}
+                id="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              {errors.email && <div className="invalid-feedback">{errors.email}</div>}
             </div>
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">Password</label>
+              <input
+                type="password"
+                className={`form-control ${errors.password && 'is-invalid'}`}
+                id="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+              {errors.general && <div className="invalid-feedback">{errors.general}</div>}
+            </div>
+            <button
+              type="submit"
+              className="btn btn-primary signup-btn"
+            >
+              Login
+            </button>
+          </form>
+          {errors.general && (
+            <div className="invalid-feedback text-center mt-3">
+              {errors.general}
+            </div>
+          )}
+          <div className="login-link">
+            <Link to="/forgotpassword">Forgot password?</Link>
+          </div>
+          <div className="login-link">
+            Don't have an account? <Link to="/signup">Sign Up</Link>
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
-};
+}
 
-export default Login  ; // Wrap the component with withRouter
+export default Login;

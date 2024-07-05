@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getDatabase, ref, onValue,push,set } from 'firebase/database';
+import { getDatabase, ref, onValue, push, set } from 'firebase/database';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './coursedetail.css';
 
@@ -24,6 +24,7 @@ const CourseDetail = () => {
   const [progress, setProgress] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [resources, setResources] = useState([]); // State for resources
+  const [liveLectures, setLiveLectures] = useState([]); // State for live lectures
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -118,12 +119,25 @@ const CourseDetail = () => {
       }
     };
 
+    const fetchLiveLectures = () => {
+      const db = getDatabase();
+      const liveLecturesRef = ref(db, `user/courses/${id}/liveLectures`);
+      onValue(liveLecturesRef, (snapshot) => {
+        const liveLecturesData = snapshot.val();
+        const liveLecturesArray = liveLecturesData ? Object.values(liveLecturesData) : [];
+        setLiveLectures(liveLecturesArray);
+      }, (error) => {
+        console.error('Error fetching live lectures:', error);
+      });
+    };
+
     fetchCourse();
     fetchReviews();
     fetchQuestions();
     fetchResources();
     checkEnrollment();
     fetchProgress();
+    fetchLiveLectures();
   }, [id, currentUser, navigate]);
 
   const handleReviewSubmit = (e) => {
@@ -267,10 +281,35 @@ const CourseDetail = () => {
         </div>
       </div>
       <div className="row mb-4">
-        <div className="col-12 animate__animated animate__fadeInUp">
-          <VideoPlayer mediaUrl={mediaUrl} title={title} />
-        </div>
-      </div>
+  {/* Live Lectures Section */}
+  <div className="col-md-6 live-lectures-section mt-2">
+    <h3>Live Lectures</h3>
+    {liveLectures.length > 0 ? (
+      <ul className="list-group mt-3">
+        {liveLectures.map((lecture, index) => (
+          <li key={index} className="list-group-item">
+            <p><strong>{lecture.title}</strong></p>
+            <p><strong>{lecture.date} at {lecture.time}</strong></p>
+            <p>Duration: {lecture.duration}</p>
+            <p>{lecture.description}</p>
+            <a href={lecture.youtubeLiveLink} target="_blank" rel="noopener noreferrer">Join Live Lecture</a>
+            {/* Optional additional information */}
+            {/* <p>Reminder: {lecture.reminder ? 'Yes' : 'No'}</p>
+            <p>Recorded: {lecture.recorded ? 'Yes' : 'No'}</p> */}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No live lectures scheduled.</p>
+    )}
+  </div>
+
+  {/* Video Player Section */}
+  <div className="col-md-6 mt-2 animate__animated animate__fadeInUp">
+    <VideoPlayer mediaUrl={mediaUrl} title={title} />
+  </div>
+</div>
+
       <div className="row">
         <div className="col-md-8 animate__animated animate__fadeInUp">
           <CourseDescription
@@ -323,7 +362,6 @@ const CourseDetail = () => {
           </div>
           <div className="resource-section mt-5">
             <h3>Supplementary Resources</h3>
-            {/* Display fetched resources */}
             {resources.length > 0 ? (
               <ul className="list-group mt-3">
                 {resources.map((resource, index) => (
@@ -336,6 +374,7 @@ const CourseDetail = () => {
               <p>No supplementary resources available.</p>
             )}
           </div>
+          
         </div>
       </div>
     </div>

@@ -21,13 +21,11 @@ const AboutUs = () => {
             <div className="row">
               <div className="col-md-6">
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Skilled Instructors</h5>
-                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Online Classes</h5>
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> International Certificate</h5>
               </div>
               <div className="col-md-6">
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Flexible Learning Options</h5>
                 <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Interactive Learning</h5>
-                <h5 className="mb-3"><i className="bi bi-arrow-right-circle-fill"></i> Affordable Pricing</h5>
               </div>
             </div>
             <Link to="/instructors" className="btn btn-primary mt-4">Meet Our Instructors</Link>
