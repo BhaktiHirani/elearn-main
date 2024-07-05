@@ -21,7 +21,6 @@ const CourseDetail = () => {
   const [averageRating, setAverageRating] = useState(0);
   const [error, setError] = useState(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [resources, setResources] = useState([]); // State for resources
   const [liveLectures, setLiveLectures] = useState([]); // State for live lectures
@@ -40,11 +39,6 @@ const CourseDetail = () => {
       onValue(courseRef, (snapshot) => {
         const data = snapshot.val();
         setCourse(data);
-        if (data && data.modules) {
-          const totalModules = data.modules.length;
-          const completedModules = data.modules.filter(module => module.completed).length;
-          setProgress((completedModules / totalModules) * 100);
-        }
       }, (error) => {
         console.error('Error fetching course:', error);
       });
@@ -93,19 +87,6 @@ const CourseDetail = () => {
       });
     };
 
-    const fetchProgress = () => {
-      if (currentUser) {
-        const db = getDatabase();
-        const progressRef = ref(db, `user/courses/${id}/progress/${currentUser.uid}`);
-        onValue(progressRef, (snapshot) => {
-          const data = snapshot.val();
-          setProgress(data || 0);
-        }, (error) => {
-          console.error('Error fetching progress:', error);
-        });
-      }
-    };
-
     const checkEnrollment = () => {
       if (currentUser) {
         const db = getDatabase();
@@ -136,7 +117,6 @@ const CourseDetail = () => {
     fetchQuestions();
     fetchResources();
     checkEnrollment();
-    fetchProgress();
     fetchLiveLectures();
   }, [id, currentUser, navigate]);
 
@@ -214,7 +194,6 @@ const CourseDetail = () => {
     const totalModules = updatedModules.length;
     const newProgress = (completedModules / totalModules) * 100;
 
-    setProgress(newProgress);
 
     const db = getDatabase();
     const progressRef = ref(db, `user/courses/${id}/progress/${currentUser.uid}`);
@@ -266,18 +245,7 @@ const CourseDetail = () => {
               Quiz
             </Link>
           </div>
-          <div className="progress my-3">
-            <div
-              className="progress-bar"
-              role="progressbar"
-              style={{ width: `${progress}%` }}
-              aria-valuenow={progress}
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              {progress}%
-            </div>
-          </div>
+         
         </div>
       </div>
       <div className="row mb-4">

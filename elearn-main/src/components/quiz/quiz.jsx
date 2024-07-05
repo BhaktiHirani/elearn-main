@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Card, Button, Form } from 'react-bootstrap';
+import { Container, Card, Button, Form, Alert } from 'react-bootstrap';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { CSSTransition } from 'react-transition-group';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -7,6 +7,8 @@ import CertificateTemplate from './certificate';
 import './quiz.css';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../authprovider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faCheckCircle, faTimesCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 
 const QuizPage = () => {
     const { id } = useParams();
@@ -17,28 +19,35 @@ const QuizPage = () => {
     const [showResults, setShowResults] = useState(false);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [showCertificate, setShowCertificate] = useState(false);
-    const [userName, setUserName] = useState("John Doe"); // Replace with actual user's name
+    const [userName] = useState("John Doe"); // Replace with actual user's name
     const [courseName, setCourseName] = useState("");
     const [timeLeft, setTimeLeft] = useState(null); // Timer state
     const [showInstruction, setShowInstruction] = useState(true); // State to toggle between instruction and quiz
+    const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false); // Track if the user has completed the quiz
     const quizDuration = 5; // Duration in minutes (changed to 5 minutes)
 
-    // Fetch quiz data
+    // Fetch quiz data and check if user has completed the quiz
     useEffect(() => {
         const fetchData = async () => {
             const db = getDatabase();
             const quizRef = ref(db, `user/courses/${id}/quizzes/quizId1`);
+            const userQuizRef = ref(db, `Users/${currentUser.uid}/completedQuizzes/quizId1`);
 
             try {
-                const snapshot = await get(quizRef);
-                const data = snapshot.val();
+                const [quizSnapshot, userQuizSnapshot] = await Promise.all([get(quizRef), get(userQuizRef)]);
+                const quizData = quizSnapshot.val();
+                const userQuizData = userQuizSnapshot.val();
 
-                if (data) {
-                    setQuizData(data);
-                    setCourseName(data.courseName);
+                if (quizData) {
+                    setQuizData(quizData);
+                    setCourseName(quizData.courseName);
                 } else {
                     console.log("No such quiz document!");
                     setQuizData(null);
+                }
+
+                if (userQuizData) {
+                    setHasCompletedQuiz(true);
                 }
             } catch (error) {
                 console.error('Error fetching quiz data:', error);
@@ -46,15 +55,13 @@ const QuizPage = () => {
         };
 
         fetchData();
-    }, [id]);
+    }, [id, currentUser.uid]);
 
     // Start the timer when instructions are hidden and quiz data is available
     useEffect(() => {
-        if (!showInstruction && quizData) {
-            // Initialize the timer for 5 minutes (in milliseconds)
+        if (!showInstruction && quizData && !hasCompletedQuiz) {
             setTimeLeft(quizDuration * 60 * 1000);
 
-            // Start the timer countdown
             const interval = setInterval(() => {
                 setTimeLeft(prevTime => {
                     if (prevTime <= 0) {
@@ -62,13 +69,13 @@ const QuizPage = () => {
                         handleSubmitQuiz();
                         return 0;
                     }
-                    return prevTime - 1000; // Decrease the time by 1 second
+                    return prevTime - 1000;
                 });
-            }, 1000); // Update every 1 second
+            }, 1000);
 
-            return () => clearInterval(interval); // Cleanup on component unmount
+            return () => clearInterval(interval);
         }
-    }, [showInstruction, quizData]);
+    }, [showInstruction, quizData, hasCompletedQuiz]);
 
     const handleNextQuestion = () => {
         setCurrentQuestionIndex(prevIndex => prevIndex + 1);
@@ -96,7 +103,6 @@ const QuizPage = () => {
         setCorrectAnswers(correct);
         setShowResults(true);
 
-        // Update the quiz status in Firestore
         const db = getDatabase();
         const userQuizRef = ref(db, `Users/${currentUser.uid}/completedQuizzes/quizId1`);
         try {
@@ -115,8 +121,30 @@ const QuizPage = () => {
         setShowCertificate(true);
     };
 
+    if (hasCompletedQuiz) {
+        return (
+            <Container className="py-5">
+                <Card className="shadow-sm border-1 text-center">
+                    <Card.Body>
+                        <FontAwesomeIcon icon={faCheckCircle} size="5x" className="text-success mb-3" />
+                        <h3>You have already completed this quiz. Thankyou!</h3>
+                    </Card.Body>
+                </Card>
+            </Container>
+        );
+    }
+
     if (!quizData) {
-        return <div className="text-center mt-5">No quiz found for this ID.</div>;
+        return (
+            <Container className="py-5">
+                <Card className="shadow-sm border-1 text-center">
+                    <Card.Body>
+                        <FontAwesomeIcon icon={faTimesCircle} size="5x" className="text-danger mb-3" />
+                        <h3>No quiz found for this ID.</h3>
+                    </Card.Body>
+                </Card>
+            </Container>
+        );
     }
 
     const currentQuestion = quizData.questions[currentQuestionIndex];
@@ -125,14 +153,39 @@ const QuizPage = () => {
 
     return (
         <Container className="py-5">
-            <Card className="shadow-sm border-0">
-                <Card.Body>
+            <Card className="shadow-sm border-1">
+                <Card.Body className='card-body-custom'>
                     {showInstruction ? (
-                        <div className="text-center">
+                        <div className="text-left">
                             <h2>Quiz Instructions</h2>
-                            <p>Welcome to the {courseName} quiz!</p>
-                            <p>You have 30 minutes to complete the quiz from the moment you start it. If you do not finish in time, the quiz will be automatically submitted.</p>
-                            <Button onClick={() => setShowInstruction(false)} variant="primary">Start Quiz</Button>
+                            <Alert variant="info">
+                                <FontAwesomeIcon icon={faClock} className="me-2" />
+                                <strong>Time limit:</strong> You have 20 minutes to complete the quiz from the moment you start it. If you do not finish in time, the quiz will be automatically submitted.
+                            </Alert>
+                            <Alert variant="info">
+                                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                                <strong>Question Format:</strong> The quiz consists of multiple-choice questions.
+                            </Alert>
+                            <Alert variant="info">
+                                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                                <strong>Scoring:</strong> Each correct answer is worth 1 point. There are no penalties for incorrect answers.
+                            </Alert>
+                            <Alert variant="info">
+                                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                                Use the "Next" and "Previous" buttons to move between questions. You can revisit and change your answers before submitting the quiz.
+                            </Alert>
+                            <Alert variant="info">
+                                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                                Click the "Submit" button when you have answered all questions.
+                            </Alert>
+                            <Alert variant="info">
+                                <FontAwesomeIcon icon={faCheckCircle} className="me-2" />
+                                Your results will be displayed immediately after submission.
+                            </Alert>
+                            <Button onClick={() => setShowInstruction(false)} variant="primary">
+                                <FontAwesomeIcon icon={faPlayCircle} className="me-2" />
+                                Start Quiz
+                            </Button>
                         </div>
                     ) : (
                         <div>
@@ -230,6 +283,7 @@ const QuizPage = () => {
                                 <div className="results text-center mt-4">
                                     <h3>Quiz Results</h3>
                                     <p>You got {correctAnswers} out of {quizData.questions.length} correct.</p>
+                                    <p>Please download your certificate.</p>
                                     {!showCertificate && (
                                         <Button variant="info" onClick={generateCertificate} className="mt-3">
                                             Generate Certificate
@@ -250,7 +304,7 @@ const QuizPage = () => {
                             )}
     
                             <div className="text-center mt-3">
-                                <p><strong>Instructions:</strong> This quiz must be completed within {quizDuration} minutes.</p>
+                                <p><strong>Instructions:</strong> This quiz must be completed within 20 minutes.</p>
                             </div>
                         </div>
                     )}

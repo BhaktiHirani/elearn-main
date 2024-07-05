@@ -1,4 +1,8 @@
 /* QuizPage.css */
+/* quiz.css */
+.card-body-custom {
+    margin: 20px;
+}
 
 /* Animation for question transitions */
 .question-enter {
