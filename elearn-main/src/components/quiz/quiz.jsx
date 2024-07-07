@@ -3,7 +3,7 @@ import { Container, Card, Button, Form, Alert } from 'react-bootstrap';
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { CSSTransition } from 'react-transition-group';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import CertificateTemplate from './certificate';
+import CertificateTemplate from './certificate'; // Import certificate template
 import './quiz.css';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../authprovider';
@@ -19,35 +19,44 @@ const QuizPage = () => {
     const [showResults, setShowResults] = useState(false);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [showCertificate, setShowCertificate] = useState(false);
-    const [userName] = useState("John Doe"); // Replace with actual user's name
-    const [courseName, setCourseName] = useState("");
+    const [userName] = useState(currentUser.displayName || "Unknown User"); // State for user name
+    const [courseName, setCourseName] = useState(""); // State for course name
     const [timeLeft, setTimeLeft] = useState(null); // Timer state
     const [showInstruction, setShowInstruction] = useState(true); // State to toggle between instruction and quiz
     const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false); // Track if the user has completed the quiz
-    const quizDuration = 5; // Duration in minutes (changed to 5 minutes)
+    const [quizId, setQuizId] = useState(null); // State to store the quiz ID
+    const quizDuration = 20; // Duration in minutes (changed to 20 minutes)
 
     // Fetch quiz data and check if user has completed the quiz
     useEffect(() => {
         const fetchData = async () => {
             const db = getDatabase();
-            const quizRef = ref(db, `user/courses/${id}/quizzes/quizId1`);
-            const userQuizRef = ref(db, `Users/${currentUser.uid}/completedQuizzes/quizId1`);
+            const courseRef = ref(db, `user/courses/${id}`);
 
             try {
-                const [quizSnapshot, userQuizSnapshot] = await Promise.all([get(quizRef), get(userQuizRef)]);
-                const quizData = quizSnapshot.val();
-                const userQuizData = userQuizSnapshot.val();
+                const courseSnapshot = await get(courseRef);
+                console.log("Course Snapshot:", courseSnapshot.val()); // Log course data
+                
+                if (courseSnapshot.exists()) {
+                    const courseData = courseSnapshot.val();
+                    const fetchedQuizId = Object.keys(courseData.quizzes)[0]; // Assuming one quiz per course
+                    console.log("Quiz ID:", fetchedQuizId); // Log quiz ID
+                    
+                    const quizData = courseData.quizzes[fetchedQuizId];
+                    console.log("Quiz Data:", quizData); // Log quiz data
 
-                if (quizData) {
                     setQuizData(quizData);
-                    setCourseName(quizData.courseName);
-                } else {
-                    console.log("No such quiz document!");
-                    setQuizData(null);
-                }
+                    setCourseName(quizData.courseName); // Set course name from fetched data
+                    setQuizId(fetchedQuizId);
 
-                if (userQuizData) {
-                    setHasCompletedQuiz(true);
+                    const userQuizRef = ref(db, `users/${currentUser.uid}/completedQuizzes/${fetchedQuizId}`);
+                    const userQuizSnapshot = await get(userQuizRef);
+                    if (userQuizSnapshot.exists()) {
+                        setHasCompletedQuiz(true);
+                    }
+                } else {
+                    console.log(`No course found for ID ${id}`);
+                    setQuizData(null);
                 }
             } catch (error) {
                 console.error('Error fetching quiz data:', error);
@@ -57,7 +66,7 @@ const QuizPage = () => {
         fetchData();
     }, [id, currentUser.uid]);
 
-    // Start the timer when instructions are hidden and quiz data is available
+    
     useEffect(() => {
         if (!showInstruction && quizData && !hasCompletedQuiz) {
             setTimeLeft(quizDuration * 60 * 1000);
@@ -104,10 +113,10 @@ const QuizPage = () => {
         setShowResults(true);
 
         const db = getDatabase();
-        const userQuizRef = ref(db, `Users/${currentUser.uid}/completedQuizzes/quizId1`);
+        const userQuizRef = ref(db, `users/${currentUser.uid}/completedQuizzes/${quizId}`);
         try {
             await set(userQuizRef, {
-                quizId: 'quizId1',
+                quizId,
                 completed: true,
                 correctAnswers: correct,
                 totalQuestions: quizData.questions.length,
@@ -127,7 +136,7 @@ const QuizPage = () => {
                 <Card className="shadow-sm border-1 text-center">
                     <Card.Body>
                         <FontAwesomeIcon icon={faCheckCircle} size="5x" className="text-success mb-3" />
-                        <h3>You have already completed this quiz. Thankyou!</h3>
+                        <h3>You have already completed this quiz. Thank you!</h3>
                     </Card.Body>
                 </Card>
             </Container>
@@ -235,16 +244,12 @@ const QuizPage = () => {
                                             )}
                                             {currentQuestionIndex < quizData.questions.length - 1 && (
                                                 <Button
-                                                    variant="primary"
+                                                    variant="outline-secondary"
                                                     onClick={handleNextQuestion}
-                                                    className="ms-2"
                                                     style={{
                                                         backgroundColor: '#17bf9e',
                                                         borderColor: '#17bf9e',
-                                                        color: '#fff',
-                                                        padding: '8px 16px',
-                                                        fontSize: '14px',
-                                                        width: '120px'
+                                                        color: '#fff'
                                                     }}
                                                 >
                                                     Next
@@ -252,60 +257,64 @@ const QuizPage = () => {
                                             )}
                                             {currentQuestionIndex === quizData.questions.length - 1 && (
                                                 <Button
-                                                    variant="success"
+                                                    variant="outline-secondary"
                                                     onClick={handleSubmitQuiz}
-                                                    className="ms-2"
                                                     style={{
                                                         backgroundColor: '#17bf9e',
                                                         borderColor: '#17bf9e',
                                                         color: '#fff'
                                                     }}
                                                 >
-                                                    Submit Quiz
+                                                    Submit
                                                 </Button>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="text-center mt-3">
-                                        <p>
-                                            <strong>Time Left:</strong> {minutes}m {seconds}s
-                                        </p>
-                                    </div>
-                                </div>
-                            </CSSTransition>
-    
-                            <CSSTransition
-                                in={showResults}
-                                timeout={300}
-                                classNames="results"
-                                unmountOnExit
-                            >
-                                <div className="results text-center mt-4">
-                                    <h3>Quiz Results</h3>
-                                    <p>You got {correctAnswers} out of {quizData.questions.length} correct.</p>
-                                    <p>Please download your certificate.</p>
-                                    {!showCertificate && (
-                                        <Button variant="info" onClick={generateCertificate} className="mt-3">
-                                            Generate Certificate
-                                        </Button>
+                                    {timeLeft !== null && (
+                                        <div className="text-center mt-3">
+                                            <h5>Time Left: {minutes} : {seconds < 10 ? `0${seconds}` : seconds}</h5>
+                                        </div>
                                     )}
                                 </div>
                             </CSSTransition>
-    
-                            {showCertificate && (
-                                <div className="certificate-download text-center mt-3">
-                                    <PDFDownloadLink
-                                        document={<CertificateTemplate name={userName} course={courseName} />}
-                                        fileName="certificate.pdf"
-                                    >
-                                        {({ blob, url, loading, error }) => (loading ? 'Generating PDF...' : 'Download Certificate')}
+                            <CSSTransition
+                                in={showResults}
+                                timeout={300}
+                                classNames="result"
+                                unmountOnExit
+                            >
+                                <div className="text-center">
+                                    <h2>Quiz Results</h2>
+                                    <Alert variant={correctAnswers === quizData.questions.length ? 'success' : 'danger'}>
+                                        <Alert.Heading>
+                                            {correctAnswers === quizData.questions.length ? 'Congratulations!' : 'Tried well!'}
+                                        </Alert.Heading>
+                                        <p>
+                                            You {correctAnswers === quizData.questions.length ? 'successfully' : 'Successfully'} completed the quiz.
+                                        </p>
+                                        <p>
+                                            {correctAnswers} out of {quizData.questions.length} questions answered correctly.
+                                        </p>
+                                        <Button onClick={generateCertificate} variant="primary" className="mt-3">
+                                            Generate Certificate
+                                        </Button>
+                                    </Alert>
+                                </div>
+                            </CSSTransition>
+                            <CSSTransition
+                                in={showCertificate}
+                                timeout={300}
+                                classNames="certificate"
+                                unmountOnExit
+                            >
+                                <div className="text-center">
+                                    <p>Please download your Certificate.</p>
+                                    {/* Use PDFDownloadLink to download the certificate with user and course names */}
+                                    <PDFDownloadLink document={<CertificateTemplate userName={userName} courseName={courseName} />} fileName="certificate.pdf">
+                                        {({ blob, url, loading, error }) => (loading ? 'Loading certificate...' : 'Download Certificate')}
                                     </PDFDownloadLink>
                                 </div>
-                            )}
-    
-                            <div className="text-center mt-3">
-                                <p><strong>Instructions:</strong> This quiz must be completed within 20 minutes.</p>
-                            </div>
+                            </CSSTransition>
                         </div>
                     )}
                 </Card.Body>

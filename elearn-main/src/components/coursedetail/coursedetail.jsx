@@ -210,6 +210,15 @@ const CourseDetail = () => {
     setCurrentModuleIndex(index);
   };
 
+  const handleNavigationWithEnrollmentCheck = (e, path) => {
+    e.preventDefault();
+    if (!isEnrolled) {
+      navigate(`/enroll/${id}`);
+    } else {
+      navigate(path);
+    }
+  };
+
   if (!course) {
     return <div className="error">Course not found</div>;
   }
@@ -238,12 +247,12 @@ const CourseDetail = () => {
                 Enroll Now
               </Link>
             )}
-            <Link
-              to={`/quiz/${id}`}
+            <button
+              onClick={(e) => handleNavigationWithEnrollmentCheck(e, `/quiz/${id}`)}
               className="btn btn-primary enroll-button"
             >
               Quiz
-            </Link>
+            </button>
           </div>
          
         </div>
@@ -260,7 +269,12 @@ const CourseDetail = () => {
             <p><strong>{lecture.date} at {lecture.time}</strong></p>
             <p>Duration: {lecture.duration}</p>
             <p>{lecture.description}</p>
-            <a href={lecture.youtubeLiveLink} target="_blank" rel="noopener noreferrer">Join Live Lecture</a>
+            <button
+              onClick={(e) => handleNavigationWithEnrollmentCheck(e, lecture.youtubeLiveLink)}
+              className="btn btn-link"
+            >
+              Join Live Lecture
+            </button>
             {/* Optional additional information */}
             {/* <p>Reminder: {lecture.reminder ? 'Yes' : 'No'}</p>
             <p>Recorded: {lecture.recorded ? 'Yes' : 'No'}</p> */}

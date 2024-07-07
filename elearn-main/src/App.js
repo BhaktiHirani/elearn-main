@@ -7,7 +7,6 @@ import Footer from './components/footer/footer';
 import Contact from './pages/contact/contact';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'animate.css/animate.min.css';
-import { ToastContainer } from 'react-toastify';
 import Signup from './components/signup/signup';
 import Login from './components/login/login';
 import Profile from './components/profile/profile';
@@ -113,7 +112,6 @@ function App() {
   element={<CourseDetail userName={currentUser?.displayName} userEmail={currentUser?.email} />}
 />
       </Routes>
-      <ToastContainer />
       <Footer />
       </AuthProvider>
 
