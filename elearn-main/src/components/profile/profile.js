@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../authprovider'; // Import useAuth hook from AuthProvider
+import { useAuth } from '../authprovider';
 import { db } from "../../firebase";
 import { doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 function Profile() {
-  const { currentUser } = useAuth(); // Get currentUser from useAuth hook
+  const { currentUser } = useAuth();
   const [userDetails, setUserDetails] = useState(null);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [completedQuizzes, setCompletedQuizzes] = useState([]);
@@ -17,42 +17,45 @@ function Profile() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (currentUser) { // Check if currentUser exists
+      if (currentUser) {
         try {
-          const docRef = doc(db, "Users", currentUser.uid);
+          const docRef = doc(db, 'Users', currentUser.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const userData = docSnap.data();
+            console.log('Fetched User Data:', userData);
             setUserDetails(userData);
             setJoinedDate(currentUser.metadata.creationTime);
-            
+
             if (userData.enrolledCourses) {
+              console.log('Enrolled Courses:', userData.enrolledCourses);
               setEnrolledCourses(userData.enrolledCourses);
             }
             
             if (userData.completedQuizzes) {
+              console.log('Completed Quizzes:', userData.completedQuizzes);
               setCompletedQuizzes(userData.completedQuizzes);
             } else {
-              setCompletedQuizzes([]); // Initialize as empty array if no completed quizzes found
+              setCompletedQuizzes([]);
             }
           } else {
-            setError("User data does not exist");
-            console.log("User data does not exist");
+            setError('User data does not exist');
+            console.log('User data does not exist');
           }
         } catch (error) {
-          setError("Error fetching user data");
-          console.error("Error fetching user data:", error);
+          setError('Error fetching user data');
+          console.error('Error fetching user data:', error);
         } finally {
           setLoading(false);
         }
       } else {
-        console.log("User is not logged in");
+        console.log('User is not logged in');
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [currentUser]); // Add currentUser as a dependency
+  }, [currentUser]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -71,7 +74,7 @@ function Profile() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            style={{ width: '100%', maxWidth: '800px', margin: '0 auto', padding: '20px' }} // Increased maxWidth
+            style={{ width: '100%', maxWidth: '800px', margin: '0 auto', padding: '20px' }}
           >
             <div className="card-header text-center">
               <img
@@ -103,7 +106,7 @@ function Profile() {
                   whileTap={{ scale: 0.9 }}
                   className="btn btn-primary mx-2"
                   onClick={() => navigate('/edit-profile')}
-                  style={{ width: '120px' }} // Decreased button width
+                  style={{ width: '120px' }}
                 >
                   Edit Profile
                 </motion.button>
@@ -136,7 +139,7 @@ function Profile() {
                   <ul className="list-group">
                     {completedQuizzes.map((quiz, index) => (
                       <li key={index} className="list-group-item">
-                        Quiz ID: {quiz.quizId} - Status: {quiz.completed ? "Completed" : "Not Completed"}
+                        Quiz ID: {quiz.quizId} - Status: {quiz.completed ? 'Completed' : 'Not Completed'} - Date: {quiz.completionDate?.toDate().toLocaleDateString() || 'N/A'}
                       </li>
                     ))}
                   </ul>

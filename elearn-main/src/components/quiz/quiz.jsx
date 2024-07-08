@@ -9,13 +9,15 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../authprovider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faCheckCircle, faTimesCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+import { db } from '../../firebase'; // Adjust the import based on your file structure
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 
 const QuizPage = () => {
     const { id } = useParams();
     const { currentUser } = useAuth();
     const [quizData, setQuizData] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState([]);
+    const [answers, setAnswers] = useState({});
     const [showResults, setShowResults] = useState(false);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [showCertificate, setShowCertificate] = useState(false);
@@ -66,7 +68,7 @@ const QuizPage = () => {
         fetchData();
     }, [id, currentUser.uid]);
 
-    
+    // Timer logic
     useEffect(() => {
         if (!showInstruction && quizData && !hasCompletedQuiz) {
             setTimeLeft(quizDuration * 60 * 1000);
@@ -86,18 +88,19 @@ const QuizPage = () => {
         }
     }, [showInstruction, quizData, hasCompletedQuiz]);
 
+    const handleAnswerSelect = (questionId, optionId) => {
+        setAnswers({
+            ...answers,
+            [questionId]: optionId
+        });
+    };
+
     const handleNextQuestion = () => {
-        setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
     };
 
     const handlePreviousQuestion = () => {
-        setCurrentQuestionIndex(prevIndex => prevIndex - 1);
-    };
-
-    const handleAnswerSelect = (questionId, selectedOptionId) => {
-        const updatedAnswers = [...answers];
-        updatedAnswers[questionId] = selectedOptionId;
-        setAnswers(updatedAnswers);
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
     };
 
     const handleSubmitQuiz = async () => {
@@ -121,8 +124,25 @@ const QuizPage = () => {
                 correctAnswers: correct,
                 totalQuestions: quizData.questions.length,
             });
+
+            await updateQuizCompletion(currentUser.uid, quizId);
         } catch (error) {
             console.error('Error updating quiz status:', error);
+        }
+    };
+
+    const updateQuizCompletion = async (userId, quizId) => {
+        try {
+            const userDocRef = doc(db, 'Users', userId);
+            
+            // Update the user document with quiz completion data
+            await updateDoc(userDocRef, {
+                completedQuizzes: arrayUnion({ quizId, completed: true, completionDate: new Date() }),
+            });
+            
+            console.log('Quiz completion status updated successfully');
+        } catch (error) {
+            console.error('Error updating quiz completion status:', error);
         }
     };
 
@@ -290,7 +310,7 @@ const QuizPage = () => {
                                             {correctAnswers === quizData.questions.length ? 'Congratulations!' : 'Tried well!'}
                                         </Alert.Heading>
                                         <p>
-                                            You {correctAnswers === quizData.questions.length ? 'successfully' : 'Successfully'} completed the quiz.
+                                            You {correctAnswers === quizData.questions.length ? 'successfully' : 'successfully'} completed the quiz.
                                         </p>
                                         <p>
                                             {correctAnswers} out of {quizData.questions.length} questions answered correctly.
