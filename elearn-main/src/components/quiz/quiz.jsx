@@ -10,7 +10,7 @@ import { useAuth } from '../authprovider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faCheckCircle, faTimesCircle, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 import { db } from '../../firebase'; // Adjust the import based on your file structure
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion,getDoc } from 'firebase/firestore';
 
 const QuizPage = () => {
     const { id } = useParams();
@@ -125,22 +125,29 @@ const QuizPage = () => {
                 courseTitle: courseName // Include the course title here
             });
 
-            await updateQuizCompletion(currentUser.uid, quizId);
+            await updateQuizCompletion(currentUser.uid, quizId, courseName);
         } catch (error) {
             console.error('Error updating quiz status:', error);
         }
     };
 
-    const updateQuizCompletion = async (userId, quizId) => {
+    const updateQuizCompletion = async (userId, quizId, courseTitle) => {
         try {
             const userDocRef = doc(db, 'Users', userId);
-            
-            // Update the user document with quiz completion data
-            await updateDoc(userDocRef, {
-                completedQuizzes: arrayUnion({ quizId, completed: true, completionDate: new Date() }),
-            });
+            const userDocSnapshot = await getDoc(userDocRef);
+            const completedQuizzes = userDocSnapshot.data().completedQuizzes || [];
+    
+            const quizIndex = completedQuizzes.findIndex(quiz => quiz.quizId === quizId);
+            if (quizIndex === -1) {
+                // Update the user document with quiz completion data
+                await updateDoc(userDocRef, {
+                    completedQuizzes: arrayUnion({ quizId, completed: true, courseTitle, completionDate: new Date() }),
+                });
             
             console.log('Quiz completion status updated successfully');
+               } else {
+            console.log('Quiz already completed by user');
+        }
         } catch (error) {
             console.error('Error updating quiz completion status:', error);
         }

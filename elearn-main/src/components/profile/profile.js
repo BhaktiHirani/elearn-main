@@ -126,7 +126,7 @@ function Profile() {
                   <ul className="list-group">
                     {enrolledCourses.map((course) => (
                       <li key={course.courseId} className="list-group-item">
-                        {course.title}
+                        {course.title || 'No Title Available'}
                       </li>
                     ))}
                   </ul>
@@ -140,7 +140,7 @@ function Profile() {
                   <ul className="list-group">
                     {completedQuizzes.map((quiz, index) => (
                       <li key={index} className="list-group-item">
-                        <div><strong>Course Title:</strong> {quiz.courseTitle}</div>
+                        <div><strong>Course Title:</strong> {quiz.courseTitle || 'No Title Available'}</div>
                         <div><strong>Status:</strong> {quiz.completed ? 'Completed' : 'Not Completed'}</div>
                         <div><strong>Date:</strong> {quiz.completionDate?.toDate().toLocaleDateString() || 'N/A'}</div>
                       </li>
