@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../authprovider'; // Correct path to authprovider
 import { Link as ScrollLink } from 'react-scroll'; // Import ScrollLink for smooth scroll
 
@@ -13,6 +13,7 @@ const navLinks = [
 
 const Header = () => {
   const { currentUser, logout } = useAuth(); // Get currentUser and logout function from useAuth hook
+  const location = useLocation(); // Get current location
 
   const handleLogout = async () => {
     try {
@@ -33,10 +34,10 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             {navLinks.map((item, index) => (
-              item.url === 'about' ? (
+              location.pathname === '/' && (item.url === 'about' || item.url === 'courses') ? (
                 <ScrollLink 
                   key={index} 
-                  to="about" 
+                  to={item.url} 
                   smooth={true} 
                   duration={500} 
                   className="navbar-link"
@@ -45,25 +46,9 @@ const Header = () => {
                     padding: '0.5rem 1rem', // Ensure padding matches
                     textDecoration: 'none', // Ensure text decoration matches
                     fontSize: '1rem', // Ensure font size matches
+                    cursor: 'pointer',
                   }}
-                  aria-label="Go to About Us"
-                >
-                  {item.display}
-                </ScrollLink>
-              ) : item.url === 'courses' ? (
-                <ScrollLink 
-                  key={index} 
-                  to="courses" 
-                  smooth={true} 
-                  duration={500} 
-                  className="navbar-link"
-                  style={{ 
-                    color: '#3D3D3D', // Ensure text color matches
-                    padding: '0.5rem 1rem', // Ensure padding matches
-                    textDecoration: 'none', // Ensure text decoration matches
-                    fontSize: '1rem', // Ensure font size matches
-                  }}
-                  aria-label="Go to Courses"
+                  aria-label={`Go to ${item.display}`}
                 >
                   {item.display}
                 </ScrollLink>
