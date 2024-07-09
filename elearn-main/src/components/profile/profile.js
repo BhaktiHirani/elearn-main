@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../authprovider';
-import { db } from "../../firebase";
+import { db } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -12,38 +12,42 @@ function Profile() {
   const [completedQuizzes, setCompletedQuizzes] = useState([]);
   const [joinedDate, setJoinedDate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (currentUser) {
         try {
-          const docRef = doc(db, 'Users', currentUser.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
-            console.log('Fetched User Data:', userData);
-            setUserDetails(userData);
-            setJoinedDate(currentUser.metadata.creationTime);
+          console.log(`Fetching data for user: ${currentUser.uid}`);
+          const userDocRef = doc(db, 'Users', currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
 
-            if (userData.enrolledCourses) {
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            setUserDetails(userData);
+            setJoinedDate(new Date(currentUser.metadata.creationTime).toLocaleDateString());
+
+            // Fetch enrolled courses
+            if (userData.enrolledCourses && Array.isArray(userData.enrolledCourses)) {
               console.log('Enrolled Courses:', userData.enrolledCourses);
               setEnrolledCourses(userData.enrolledCourses);
+            } else {
+              console.warn('No enrolled courses found for the user.');
+              setEnrolledCourses([]);
             }
-            
-            if (userData.completedQuizzes) {
+
+            // Fetch completed quizzes from the user data
+            if (userData.completedQuizzes && Array.isArray(userData.completedQuizzes)) {
               console.log('Completed Quizzes:', userData.completedQuizzes);
               setCompletedQuizzes(userData.completedQuizzes);
             } else {
+              console.warn('No completed quizzes found for the user.');
               setCompletedQuizzes([]);
             }
           } else {
-            setError('User data does not exist');
-            console.log('User data does not exist');
+            throw new Error('User data does not exist');
           }
         } catch (error) {
-          setError('Error fetching user data');
           console.error('Error fetching user data:', error);
         } finally {
           setLoading(false);
@@ -59,10 +63,6 @@ function Profile() {
 
   if (loading) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
   }
 
   return (
@@ -97,7 +97,7 @@ function Profile() {
                   <p className="pl-3"><strong>Total Courses Enrolled:</strong> {enrolledCourses.length}</p>
                 </div>
                 <div className="col-md-6">
-                  <p className="pl-3"><strong>Total Courses Completed:</strong> {userDetails?.completedCourses?.length || 0}</p>
+                  <p className="pl-3"><strong>Total Quizzes Completed:</strong> {completedQuizzes.length}</p>
                 </div>
               </div>
               <div className="text-center mb-4">
@@ -123,7 +123,7 @@ function Profile() {
                 <h5 className="mb-3">Enrolled Courses:</h5>
                 {enrolledCourses.length > 0 ? (
                   <ul className="list-group">
-                    {enrolledCourses.map(course => (
+                    {enrolledCourses.map((course) => (
                       <li key={course.courseId} className="list-group-item">
                         {course.title}
                       </li>
@@ -139,7 +139,9 @@ function Profile() {
                   <ul className="list-group">
                     {completedQuizzes.map((quiz, index) => (
                       <li key={index} className="list-group-item">
-                        Quiz ID: {quiz.quizId} - Status: {quiz.completed ? 'Completed' : 'Not Completed'} - Date: {quiz.completionDate?.toDate().toLocaleDateString() || 'N/A'}
+                        <div><strong>Course Title:</strong> {quiz.courseTitle}</div>
+                        <div><strong>Status:</strong> {quiz.completed ? 'Completed' : 'Not Completed'}</div>
+                        <div><strong>Date:</strong> {quiz.completionDate?.toDate().toLocaleDateString() || 'N/A'}</div>
                       </li>
                     ))}
                   </ul>
