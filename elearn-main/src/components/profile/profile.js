@@ -4,6 +4,7 @@ import { db } from "../../firebase";
 import { doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../loading';
 
 function Profile() {
   const { currentUser } = useAuth(); // Get currentUser from useAuth hook
@@ -31,7 +32,8 @@ function Profile() {
             }
             
             if (userData.completedQuizzes) {
-              setCompletedQuizzes(userData.completedQuizzes);
+              const quizzes = Object.values(userData.completedQuizzes);
+              setCompletedQuizzes(quizzes);
             } else {
               setCompletedQuizzes([]); // Initialize as empty array if no completed quizzes found
             }
@@ -55,15 +57,16 @@ function Profile() {
   }, [currentUser]); // Add currentUser as a dependency
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
+
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-4 mb-4">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <motion.div
@@ -74,12 +77,6 @@ function Profile() {
             style={{ width: '100%', maxWidth: '800px', margin: '0 auto', padding: '20px' }} // Increased maxWidth
           >
             <div className="card-header text-center">
-              <img
-                src={userDetails?.profilePicture || 'https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg'}
-                alt="Profile"
-                className="rounded-circle"
-                style={{ width: 100, height: 100 }}
-              />
               <h4 className="mt-3">{userDetails?.fullname}</h4>
             </div>
             <div className="card-body">

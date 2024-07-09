@@ -81,7 +81,7 @@ function EditProfile() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-4">
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card">
@@ -113,25 +113,6 @@ function EditProfile() {
                     disabled
                   />
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="profilePicture" className="form-label">Profile Picture</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    id="profilePicture"
-                    name="profilePicture"
-                    accept="image/*"
-                    onChange={handleImageChange} // Call handleImageChange on file selection
-                  />
-                </div>
-                {userDetails.profilePicture && (
-                  <img
-                    src={userDetails.profilePicture}
-                    alt="Profile"
-                    className="img-fluid mb-3"
-                    style={{ maxHeight: 200 }}
-                  />
-                )}
                 <div className="text-center">
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </div>

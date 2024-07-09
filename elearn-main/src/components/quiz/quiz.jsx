@@ -19,15 +19,14 @@ const QuizPage = () => {
     const [showResults, setShowResults] = useState(false);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [showCertificate, setShowCertificate] = useState(false);
-    const [userName] = useState(currentUser.displayName || "Unknown User"); // State for user name
-    const [courseName, setCourseName] = useState(""); // State for course name
-    const [timeLeft, setTimeLeft] = useState(null); // Timer state
-    const [showInstruction, setShowInstruction] = useState(true); // State to toggle between instruction and quiz
-    const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false); // Track if the user has completed the quiz
-    const [quizId, setQuizId] = useState(null); // State to store the quiz ID
-    const quizDuration = 20; // Duration in minutes (changed to 20 minutes)
+    const [userName] = useState(currentUser.displayName || "Unknown User");
+    const [courseName, setCourseName] = useState("");
+    const [timeLeft, setTimeLeft] = useState(null);
+    const [showInstruction, setShowInstruction] = useState(true);
+    const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false);
+    const [quizId, setQuizId] = useState(null);
+    const quizDuration = 20; // Duration in minutes
 
-    // Fetch quiz data and check if user has completed the quiz
     useEffect(() => {
         const fetchData = async () => {
             const db = getDatabase();
@@ -120,6 +119,7 @@ const QuizPage = () => {
                 completed: true,
                 correctAnswers: correct,
                 totalQuestions: quizData.questions.length,
+                courseTitle: courseName // Include the course title here
             });
         } catch (error) {
             console.error('Error updating quiz status:', error);

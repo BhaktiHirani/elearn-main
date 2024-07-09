@@ -10,8 +10,8 @@ const Footer = () => {
           <div className="col-md-4 mb-4">
             <h5>Quick Links</h5>
             <ul className="list-unstyled">
-              <li><a href="/aboutus" className="text-white">About Us</a></li>
-              <li><a href="/contactus" className="text-white">Contact Us</a></li>
+              <li><a href="/about" className="text-white">About Us</a></li>
+              <li><a href="contactus" className="text-white">Contact Us</a></li>
               <li><a href="/privacypolicy" className="text-white">Privacy Policy</a></li>
               <li><a href="/termsandconditions" className="text-white">Terms & Conditions</a></li>
               <li><a href="/faqs" className="text-white">FAQs & Help</a></li>

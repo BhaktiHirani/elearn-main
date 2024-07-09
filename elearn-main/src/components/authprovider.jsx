@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase'; // Adjust the path as necessary
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc,collection,addDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -11,12 +11,31 @@ export const useAuth = () => {
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [db, setDb] = useState(null); // State to hold Firestore instance
 
   const login = async (email, password) => {
     try {
       await auth.signInWithEmailAndPassword(email, password);
     } catch (error) {
       console.error('Login error:', error);
+      throw error;
+    }
+  };
+  const submitReview = async (reviewData) => {
+    try {
+      const { currentUser } = auth;
+      if (!currentUser) {
+        throw new Error('User not authenticated.');
+      }
+
+      await addDoc(collection(db, 'reviews'), {
+        userId: currentUser.uid,
+        ...reviewData,
+        timestamp: new Date(),
+      });
+      console.log('Review submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting review:', error);
       throw error;
     }
   };
@@ -52,6 +71,7 @@ const AuthProvider = ({ children }) => {
     currentUser,
     login,
     logout,
+    submitReview,
   };
 
   return (

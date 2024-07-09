@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'animate.css/animate.min.css';
+import { useAuth } from '../../components/authprovider';// Adjust the path as necessary
 
 const Contact = () => {
+  const { currentUser } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: currentUser ? currentUser.displayName : '',
+    email: currentUser ? currentUser.email : '',
     subject: '',
     message: ''
   });
@@ -21,6 +23,7 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+    // Handle form submission logic here
     setFormData({
       name: '',
       email: '',
@@ -28,6 +31,18 @@ const Contact = () => {
       message: ''
     });
   };
+
+  // Update form data if currentUser changes
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        name: currentUser.displayName,
+        email: currentUser.email,
+        subject: '',
+        message: ''
+      });
+    }
+  }, [currentUser]);
 
   return (
     <div className="container-fluid p-5 bg-light">
