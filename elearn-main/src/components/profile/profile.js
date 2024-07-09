@@ -13,6 +13,7 @@ function Profile() {
   const [completedQuizzes, setCompletedQuizzes] = useState([]);
   const [joinedDate, setJoinedDate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,18 +37,11 @@ function Profile() {
               console.warn('No enrolled courses found for the user.');
               setEnrolledCourses([]);
             }
-<<<<<<< HEAD
-            
-            if (userData.completedQuizzes) {
-              const quizzes = Object.values(userData.completedQuizzes);
-              setCompletedQuizzes(quizzes);
-=======
 
             // Fetch completed quizzes from the user data
             if (userData.completedQuizzes && Array.isArray(userData.completedQuizzes)) {
               console.log('Completed Quizzes:', userData.completedQuizzes);
               setCompletedQuizzes(userData.completedQuizzes);
->>>>>>> 0754af236e333ef5229446ce1be4807ff72f670b
             } else {
               console.warn('No completed quizzes found for the user.');
               setCompletedQuizzes([]);
@@ -57,6 +51,7 @@ function Profile() {
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
+          setError(error.message);
         } finally {
           setLoading(false);
         }
@@ -73,14 +68,10 @@ function Profile() {
     return <Loading />;
   }
 
-<<<<<<< HEAD
-
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-=======
->>>>>>> 0754af236e333ef5229446ce1be4807ff72f670b
   return (
     <div className="container mt-4 mb-4">
       <div className="row justify-content-center">
