@@ -1,10 +1,8 @@
-// utils/firebaseUtils.js
 import { db } from '../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 export async function completeQuiz(userId, quizId, courseId, quizTitle, completionDate, userData) {
   try {
-    // Get the course document to retrieve the courseTitle
     const courseRef = doc(db, 'Courses', courseId);
     const courseSnap = await getDoc(courseRef);
 
@@ -12,10 +10,8 @@ export async function completeQuiz(userId, quizId, courseId, quizTitle, completi
       const courseData = courseSnap.data();
       const courseTitle = courseData.title || 'Unknown Course';
 
-      // Reference to the user document
       const userRef = doc(db, 'Users', userId);
 
-      // Update the user's completedQuizzes array
       await updateDoc(userRef, {
         completedQuizzes: [
           ...userData.completedQuizzes,

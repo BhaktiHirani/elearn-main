@@ -3,7 +3,7 @@ import { ref, onValue } from 'firebase/database';
 import { database } from '../../firebase';
 import './instructor.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; 
 
 const Instructors = () => {
   const [instructors, setInstructors] = useState([]);
@@ -27,7 +27,7 @@ const Instructors = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const isVisible = scrollTop > 100; // Adjust as needed
+      const isVisible = scrollTop > 100; 
       if (isVisible) {
         document.querySelectorAll('.instructor').forEach((element) => {
           element.classList.add('animate__animated', 'animate__fadeInUp');

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { auth, db } from '../../firebase'; // Ensure this is the correct path to your firebase.js
-import '../signup/signup.css'; // Importing the same CSS file as Signup
+import { auth, db } from '../../firebase'; 
+import '../signup/signup.css'; 
 import { collection, addDoc } from 'firebase/firestore';
 import { sendPasswordResetEmail } from 'firebase/auth';
 
@@ -40,7 +40,6 @@ const ForgotPassword = () => {
       setIsEmailSent(true);
       console.log('Password reset email sent successfully!');
 
-      // Save the reset password request in Firestore (optional)
       await addDoc(collection(db, 'passwordResetRequests'), {
         email,
         createdAt: new Date(),

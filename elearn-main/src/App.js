@@ -37,16 +37,12 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      // Sign out the user from Firebase authentication
       await auth.signOut();
   
-      // Reset any user-related state
       setIsLoggedIn(false);
   
-      // Redirect the user to the login page or another appropriate page
     } catch (error) {
       console.error('Error logging out:', error.message);
-      // Handle any logout errors here
     }
   };
 

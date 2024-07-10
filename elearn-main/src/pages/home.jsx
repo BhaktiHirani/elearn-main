@@ -21,25 +21,22 @@ const Home = () => {
 
         onValue(coursesRef, (snapshot) => {
           const data = snapshot.val();
-          console.log('Fetched courses data:', data); // Log fetched data
+          console.log('Fetched courses data:', data); 
 
           if (data) {
-            // Convert courses object into an array
             const coursesArray = Object.keys(data).map(key => ({
               id: key,
               ...data[key]
             }));
-            console.log('Courses array:', coursesArray); // Log courses array
+            console.log('Courses array:', coursesArray); 
 
-            // Sort courses by rating in descending order
             const sortedCourses = coursesArray.sort((a, b) => b.rating - a.rating);
-            console.log('Sorted courses:', sortedCourses); // Log sorted courses
+            console.log('Sorted courses:', sortedCourses); 
 
             // Limit to top 3 courses
             const top3Courses = sortedCourses.slice(0, 3);
-            console.log('Top 3 courses:', top3Courses); // Log top 3 courses
+            console.log('Top 3 courses:', top3Courses); 
 
-            // Set the top-rated courses state
             setTopRatedCourses(top3Courses);
           }
         });

@@ -57,20 +57,7 @@ function EditProfile() {
     }));
   };
 
-  // Function to handle image selection
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUserDetails((prevDetails) => ({
-        ...prevDetails,
-        profilePicture: reader.result,
-      }));
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
+ 
 
   if (loading) {
     return <div>Loading...</div>;

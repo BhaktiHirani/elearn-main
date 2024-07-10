@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import Loading from '../loading';
 
 const CompletedQuizzes = ({ completedQuizzes }) => {
-  // Function to remove duplicates based on courseTitle
   const removeDuplicates = (array, key) => {
     const seen = new Set();
     return array.filter(item => {
@@ -100,7 +99,6 @@ function Profile() {
     fetchUserData();
   }, [currentUser]);
 
-  // Function to remove duplicates based on courseTitle
   const removeDuplicates = (array, key) => {
     const seen = new Set();
     return array.filter(item => {

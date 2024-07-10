@@ -1,4 +1,3 @@
-// components/VideoPlayer.js
 
 import React from 'react';
 import { getYouTubeVideoId } from './utils';

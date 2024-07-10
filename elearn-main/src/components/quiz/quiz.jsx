@@ -27,7 +27,7 @@ const QuizPage = () => {
     const [showInstruction, setShowInstruction] = useState(true);
     const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false);
     const [quizId, setQuizId] = useState(null);
-    const quizDuration = 20; // Duration in minutes
+    const quizDuration = 20; 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,18 +36,18 @@ const QuizPage = () => {
 
             try {
                 const courseSnapshot = await get(courseRef);
-                console.log("Course Snapshot:", courseSnapshot.val()); // Log course data
+                console.log("Course Snapshot:", courseSnapshot.val()); 
                 
                 if (courseSnapshot.exists()) {
                     const courseData = courseSnapshot.val();
-                    const fetchedQuizId = Object.keys(courseData.quizzes)[0]; // Assuming one quiz per course
-                    console.log("Quiz ID:", fetchedQuizId); // Log quiz ID
+                    const fetchedQuizId = Object.keys(courseData.quizzes)[0]; 
+                    console.log("Quiz ID:", fetchedQuizId);
                     
                     const quizData = courseData.quizzes[fetchedQuizId];
-                    console.log("Quiz Data:", quizData); // Log quiz data
+                    console.log("Quiz Data:", quizData);
 
                     setQuizData(quizData);
-                    setCourseName(quizData.courseName); // Set course name from fetched data
+                    setCourseName(quizData.courseName); 
                     setQuizId(fetchedQuizId);
 
                     const userQuizRef = ref(db, `users/${currentUser.uid}/completedQuizzes/${fetchedQuizId}`);
@@ -67,7 +67,6 @@ const QuizPage = () => {
         fetchData();
     }, [id, currentUser.uid]);
 
-    // Timer logic
     useEffect(() => {
         if (!showInstruction && quizData && !hasCompletedQuiz) {
             setTimeLeft(quizDuration * 60 * 1000);
@@ -122,7 +121,7 @@ const QuizPage = () => {
                 completed: true,
                 correctAnswers: correct,
                 totalQuestions: quizData.questions.length,
-                courseTitle: courseName // Include the course title here
+                courseTitle: courseName
             });
 
             await updateQuizCompletion(currentUser.uid, quizId, courseName);
@@ -336,7 +335,6 @@ const QuizPage = () => {
                             >
                                 <div className="text-center">
                                     <p>Please download your Certificate.</p>
-                                    {/* Use PDFDownloadLink to download the certificate with user and course names */}
                                     <PDFDownloadLink document={<CertificateTemplate userName={userName} courseName={courseName} />} fileName="certificate.pdf">
                                         {({ blob, url, loading, error }) => (loading ? 'Loading certificate...' : 'Download Certificate')}
                                     </PDFDownloadLink>

@@ -275,7 +275,6 @@ const CourseDetail = () => {
             >
               Join Live Lecture
             </button>
-            {/* Optional additional information */}
             {/* <p>Reminder: {lecture.reminder ? 'Yes' : 'No'}</p>
             <p>Recorded: {lecture.recorded ? 'Yes' : 'No'}</p> */}
           </li>

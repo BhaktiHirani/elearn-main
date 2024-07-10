@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { Link } from 'react-router-dom';
-import '../../components/signup/signup.css'; // Importing the same CSS file as Signup
+import '../../components/signup/signup.css'; 
 
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('');
@@ -40,12 +40,10 @@ function Login({ onLoginSuccess }) {
         console.log("User logged in Successfully!");
         onLoginSuccess();
       } else {
-        // If user is not found, set error
         setErrors({ general: 'User not found. Please check your email.' });
         window.alert('User not found. Please check your email.');
       }
     } catch (error) {
-      // Handle specific error codes
       if (error.code === 'auth/user-not-found') {
         setErrors({ general: 'User not found. Please check your email.' });
         window.alert('User not found. Please check your email.');

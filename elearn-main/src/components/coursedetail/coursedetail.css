@@ -30,21 +30,21 @@
 }
 
 .bg-light.p-4.rounded.shadow form {
-  width: 100%; /* Ensure the form takes full width */
+  width: 100%; 
 }
 
 .bg-light.p-4.rounded.shadow form button[type="submit"] {
-  width: 50%; /* Set button width */
-  margin-top: 20px; /* Add gap on top */
+  width: 50%; 
+  margin-top: 20px; 
 }
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px; /* Adjust the gap between buttons as needed */
+  gap: 10px; 
 }
 
 .enroll-button {
-  padding: 10px 20px; /* Adjust padding as needed */
+  padding: 10px 20px; 
 }
 

@@ -1,24 +1,24 @@
 import React from 'react';
 import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../authprovider'; // Correct path to authprovider
-import { Link as ScrollLink } from 'react-scroll'; // Import ScrollLink for smooth scroll
+import { useAuth } from '../authprovider'; 
+import { Link as ScrollLink } from 'react-scroll'; 
 
 const navLinks = [
   { display: 'Home', url: '/' },
-  { display: 'Courses', url: 'courses' }, // Updated URL for ScrollLink functionality
+  { display: 'Courses', url: 'courses' }, 
   { display: 'About Us', url: 'about' }, 
   { display: 'Contact Us', url: '/contact' },
 ];
 
 const Header = () => {
-  const { currentUser, logout } = useAuth(); // Get currentUser and logout function from useAuth hook
-  const location = useLocation(); // Get current location
+  const { currentUser, logout } = useAuth(); 
+  const location = useLocation(); 
 
   const handleLogout = async () => {
     try {
-      await logout(); // Call logout function obtained from useAuth hook
-      window.location.href = '/login'; // Redirect to login page
+      await logout(); 
+      window.location.href = '/login'; 
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -42,10 +42,10 @@ const Header = () => {
                   duration={500} 
                   className="navbar-link"
                   style={{ 
-                    color: '#3D3D3DF3', // Ensure text color matches
-                    padding: '0.5rem 1rem', // Ensure padding matches
-                    textDecoration: 'none', // Ensure text decoration matches
-                    fontSize: '1rem', // Ensure font size matches
+                    color: '#3D3D3DF3', 
+                    padding: '0.5rem 1rem', 
+                    textDecoration: 'none', 
+                    fontSize: '1rem', 
                     cursor: 'pointer',
                   }}
                   aria-label={`Go to ${item.display}`}

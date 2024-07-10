@@ -52,7 +52,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user && !user.displayName) {
-        // If user is logged in but does not have displayName, fetch from Firestore
         const userDocRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(userDocRef);
         if (docSnap.exists()) {
@@ -63,7 +62,7 @@ const AuthProvider = ({ children }) => {
       setCurrentUser(user);
       setLoading(false);
     });
-    return unsubscribe; // Cleanup function to unsubscribe from the listener
+    return unsubscribe;
   }, []);
 
   const value = {
@@ -75,7 +74,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children} {/* Render children only when loading is false */}
+      {!loading && children} 
     </AuthContext.Provider>
   );
 };

@@ -82,12 +82,10 @@ const EnrollmentForm = () => {
             const database = getDatabase();
             const courseRef = ref(database, `user/courses/${id}/enrolled_users`);
 
-            // Add user's UID to the enrolled users list of the course
             await update(courseRef, {
                 [userId]: true
             });
 
-            // Update the Firestore user document with the new enrolled course
             const userDocRef = doc(db, "Users", userId);
             await updateDoc(userDocRef, {
                 enrolledCourses: arrayUnion({ courseId: id, title: courseData.title })

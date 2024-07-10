@@ -7,7 +7,7 @@
   opacity: 1;
 }
 .instructor-card {
-  height: 350px; /* Adjust the height as needed */
+  height: 350px; 
   padding: 20px;
   display: flex;
   flex-direction: column;

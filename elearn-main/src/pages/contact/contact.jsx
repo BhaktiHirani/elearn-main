@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'animate.css/animate.min.css';
-import { useAuth } from '../../components/authprovider';// Adjust the path as necessary
+import { useAuth } from '../../components/authprovider';
 
 const Contact = () => {
   const { currentUser } = useAuth();
@@ -23,7 +23,6 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-    // Handle form submission logic here
     setFormData({
       name: '',
       email: '',
@@ -32,7 +31,6 @@ const Contact = () => {
     });
   };
 
-  // Update form data if currentUser changes
   useEffect(() => {
     if (currentUser) {
       setFormData({

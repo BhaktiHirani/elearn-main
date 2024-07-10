@@ -7,8 +7,6 @@
   width: 100%;
 }
 
-
-
 .steps-container {
   display: flex;
   align-items: center;
@@ -26,11 +24,11 @@
   position: relative;
   overflow: hidden;
   text-align: center;
-  opacity: 0; /* Set initial opacity to 0 for the animation */
+  opacity: 0; 
 }
 
 .step.animate__fadeInUp {
-  opacity: 1; /* Change opacity to 1 to reveal the element */
+  opacity: 1; 
 }
 
 .step-icon {
@@ -44,7 +42,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 20px auto 10px auto; /* Adjusted margin */
+  margin: 20px auto 10px auto; 
 }
 
 

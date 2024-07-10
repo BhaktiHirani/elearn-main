@@ -1,7 +1,6 @@
 import React from 'react';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 
-// Define styles for the certificate
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
@@ -14,7 +13,7 @@ const styles = StyleSheet.create({
   },
   certificate: {
     width: '100%',
-    maxWidth: 700,  // Width for the card
+    maxWidth: 700,  
     textAlign: 'center',
     border: '5px solid #4a90e2',
     borderRadius: 15,
@@ -24,24 +23,24 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     display: 'flex',
-    justifyContent: 'center', // Center the logo horizontally within the card
-    alignItems: 'center', // Center the logo vertically within the card
+    justifyContent: 'center', 
+    alignItems: 'center', 
     marginBottom: 20,
   },
   logo: {
-    width: 120,  // Size for better visibility
+    width: 120,  
     height: 120,
   },
   title: {
-    fontSize: 25,  // Slightly larger for emphasis
+    fontSize: 25,  
     fontWeight: 'bold',
     marginBottom: 10,
     textTransform: 'uppercase',
-    color: '#4a90e2',  // Matching the border color
-    whiteSpace: 'nowrap', // Ensure title stays on one line
+    color: '#4a90e2',  
+    whiteSpace: 'nowrap', 
   },
   subtitle: {
-    fontSize: 22,  // Slightly larger for readability
+    fontSize: 22,  
     marginBottom: 15,
     color: '#666',
   },
@@ -51,20 +50,20 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   name: {
-    fontSize: 28,  // Increased size for emphasis
+    fontSize: 28, 
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#000',
   },
   course: {
-    fontSize: 20,  // Slightly smaller for contrast
+    fontSize: 20,  
     fontWeight: 'bold',
     marginBottom: 25,
     color: '#000',
   },
   footer: {
     marginTop: 30,
-    fontSize: 14,  // Slightly larger for readability
+    fontSize: 14, 
     color: '#888',
   },
 });

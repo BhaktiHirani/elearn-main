@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import './feature.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; 
 
 const Feature = () => {
 

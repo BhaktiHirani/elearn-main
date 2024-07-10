@@ -10,7 +10,7 @@ const Courses = ({ limit, showSearchBar }) => {
   const [courseData, setCourseData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [averageRatings, setAverageRatings] = useState({});
-  const [enrolledStudents, setEnrolledStudents] = useState({}); // State to hold enrolled student counts
+  const [enrolledStudents, setEnrolledStudents] = useState({}); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +26,6 @@ const Courses = ({ limit, showSearchBar }) => {
           }));
           setCourseData(formattedData);
 
-          // Fetch average ratings for each course
           const ratingsPromises = formattedData.map(course => fetchAverageRating(course.id));
           Promise.all(ratingsPromises).then(ratings => {
             const ratingsMap = {};
@@ -38,7 +37,6 @@ const Courses = ({ limit, showSearchBar }) => {
             console.error('Error fetching average ratings:', error);
           });
 
-          // Fetch enrolled students count for each course
           const enrolledPromises = formattedData.map(course => fetchEnrolledStudents(course.id));
           Promise.all(enrolledPromises).then(enrolledCounts => {
             const enrolledMap = {};
@@ -61,7 +59,6 @@ const Courses = ({ limit, showSearchBar }) => {
     fetchData();
   }, []);
 
-  // Function to fetch average rating for a course
   const fetchAverageRating = async (courseId) => {
     const db = getDatabase();
     const reviewsRef = ref(db, `user/courses/${courseId}/reviews`);
@@ -74,7 +71,7 @@ const Courses = ({ limit, showSearchBar }) => {
           const avgRating = totalRating / reviewsArray.length;
           resolve(avgRating.toFixed(1));
         } else {
-          resolve(0); // No reviews yet
+          resolve(0);
         }
       }, (error) => {
         reject(error);
@@ -82,7 +79,6 @@ const Courses = ({ limit, showSearchBar }) => {
     });
   };
 
-  // Function to fetch enrolled students count for a course
   const fetchEnrolledStudents = async (courseId) => {
     const db = getDatabase();
     const courseRef = ref(db, `user/courses/${courseId}/enrolled_users`);
@@ -93,7 +89,7 @@ const Courses = ({ limit, showSearchBar }) => {
           const count = Object.keys(enrolledData).length;
           resolve(count);
         } else {
-          resolve(0); // No enrolled users yet
+          resolve(0); 
         }
       }, (error) => {
         reject(error);

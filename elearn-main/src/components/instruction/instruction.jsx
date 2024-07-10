@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './instruction.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; // FontAwesome book icon
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'; 
 
 const Instruction = () => {
   useEffect(() => {
