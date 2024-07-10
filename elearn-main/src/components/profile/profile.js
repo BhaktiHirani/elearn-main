@@ -6,6 +6,42 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../loading';
 
+const CompletedQuizzes = ({ completedQuizzes }) => {
+  // Function to remove duplicates based on courseTitle
+  const removeDuplicates = (array, key) => {
+    const seen = new Set();
+    return array.filter(item => {
+      const value = item[key];
+      if (seen.has(value)) {
+        return false;
+      }
+      seen.add(value);
+      return true;
+    });
+  };
+
+  const uniqueQuizzes = removeDuplicates(completedQuizzes, 'courseTitle');
+
+  return (
+    <div className="mt-4">
+      <h5 className="mb-3">Completed Quizzes:</h5>
+      {uniqueQuizzes.length > 0 ? (
+        <ul className="list-group">
+          {uniqueQuizzes.map((quiz, index) => (
+            <li key={index} className="list-group-item">
+              <div><strong>Course Title:</strong> {quiz.courseTitle || 'No Title Available'}</div>
+              <div><strong>Status:</strong> {quiz.completed ? 'Completed' : 'Not Completed'}</div>
+              <div><strong>Date:</strong> {quiz.completionDate ? quiz.completionDate.toDate().toLocaleDateString() : 'N/A'}</div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No completed quizzes.</p>
+      )}
+    </div>
+  );
+};
+
 function Profile() {
   const { currentUser } = useAuth();
   const [userDetails, setUserDetails] = useState(null);
@@ -134,22 +170,7 @@ function Profile() {
                   <p>No enrolled courses.</p>
                 )}
               </div>
-              <div className="mt-4">
-                <h5 className="mb-3">Completed Quizzes:</h5>
-                {completedQuizzes.length > 0 ? (
-                  <ul className="list-group">
-                    {completedQuizzes.map((quiz, index) => (
-                      <li key={index} className="list-group-item">
-                        <div><strong>Course Title:</strong> {quiz.courseTitle || 'No Title Available'}</div>
-                        <div><strong>Status:</strong> {quiz.completed ? 'Completed' : 'Not Completed'}</div>
-                        <div><strong>Date:</strong> {quiz.completionDate?.toDate().toLocaleDateString() || 'N/A'}</div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No completed quizzes.</p>
-                )}
-              </div>
+              <CompletedQuizzes completedQuizzes={completedQuizzes} />
             </div>
           </motion.div>
         </div>
