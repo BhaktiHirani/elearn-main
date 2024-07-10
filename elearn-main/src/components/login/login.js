@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
@@ -6,7 +5,6 @@ import { Link } from 'react-router-dom';
 import '../../components/signup/signup.css'; // Importing the same CSS file as Signup
 
 function Login({ onLoginSuccess }) {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -40,18 +38,18 @@ function Login({ onLoginSuccess }) {
       if (user) {
         console.log("User logged in Successfully!");
         onLoginSuccess();
-      } else {
-        // If user is not found, set error
-        setErrors({ general: 'User not found. Please check your email.' });
       }
     } catch (error) {
       // Handle specific error codes
       if (error.code === 'auth/user-not-found') {
         setErrors({ general: 'User not found. Please check your email.' });
+        window.alert('User not found. Please check your email.');
       } else if (error.code === 'auth/wrong-password') {
         setErrors({ password: 'Incorrect password. Please try again.' });
+        window.alert('Incorrect password. Please try again.');
       } else {
         setErrors({ general: 'Login failed. Please try again later.' });
+        window.alert('Login failed. Please try again later.');
       }
     }
   };
@@ -90,7 +88,6 @@ function Login({ onLoginSuccess }) {
                 required
               />
               {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-              {errors.general && <div className="invalid-feedback">{errors.general}</div>}
             </div>
             <button
               type="submit"

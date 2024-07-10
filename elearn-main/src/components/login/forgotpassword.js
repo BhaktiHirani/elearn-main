@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth, db } from '../../firebase';
 import { toast } from 'react-toastify';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is imported
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -10,17 +12,22 @@ const ForgotPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      await auth.sendPasswordResetEmail(email);
+      console.log('Sending password reset email to:', email); // Debug log
+      await sendPasswordResetEmail(auth, email);
       setIsEmailSent(true);
+
       // Save the reset password request in Firestore
+      console.log('Saving password reset request to Firestore'); // Debug log
       await db.collection('passwordResetRequests').add({
         email,
         createdAt: new Date(),
       });
+
       toast.success('Password reset email sent successfully!', {
         position: 'top-center',
       });
     } catch (error) {
+      console.error('Error sending password reset email:', error.message); // Debug log
       toast.error(error.message, {
         position: 'bottom-center',
       });
