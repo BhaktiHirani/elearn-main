@@ -14,7 +14,7 @@ const Feature = () => {
     },
     {
       title: 'Certification',
-      desc: 'Our courses are meticulously designed to help you  earn certificates that are recognized and respected in the industry fields further.',
+      desc: 'Our courses are designed to help you earn professional certificates that are widely recognized and highly respected in various industry fields.',
       icon: 'ri-award-line'
     },
     {

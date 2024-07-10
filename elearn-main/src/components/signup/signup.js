@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { setDoc, doc } from 'firebase/firestore';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import './signup.css';
 
@@ -66,9 +65,7 @@ function Signup() {
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) {
-      toast.error('Please fix the errors before submitting.', {
-        position: "bottom-center",
-      });
+      window.alert('Please fix the errors before submitting.');
       return;
     }
     try {
@@ -81,11 +78,14 @@ function Signup() {
         });
       }
       console.log("User registered successfully");
-      toast.success("User Registered Successfully!", {
-        position: "top-center",
-      });
+      window.alert("User Registered Successfully!");
       navigate('/login');
     } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        window.alert('Email is already in use. Please use a different email.');
+      } else {
+        window.alert(error.message);
+      }
       console.log(error.message);
     }
   };
