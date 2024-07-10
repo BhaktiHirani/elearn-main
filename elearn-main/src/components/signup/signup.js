@@ -78,7 +78,6 @@ function Signup() {
         });
       }
       console.log("User registered successfully");
-      window.alert("User Registered Successfully!");
       navigate('/login');
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
