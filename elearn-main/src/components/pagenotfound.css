@@ -1,0 +1,13 @@
+/* Appropriate CSS file or inside a styled component */
+.text-danger {
+    color: #dc3545; /* Bootstrap danger color */
+  }
+  
+  .text-primary {
+    color: #007bff; /* Bootstrap primary color */
+  }
+  
+  .text-warning {
+    color: #ffc107; /* Bootstrap warning color */
+  }
+  

@@ -19,6 +19,7 @@ import CoursesPage from './components/coursessection/coursepage';
 import AuthProvider,{ useAuth }  from './components/authprovider';
 import { auth } from './firebase';
 import EditProfile from './components/editprofile/editprofile';
+import NotFoundPage from './components/pagenotfound';
 
 function App() {
   const { currentUser, loading } = useAuth();
@@ -64,6 +65,8 @@ function App() {
         <Route path="/quiz/:id" element={<QuizPage />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/instructors" element={<Instructors />} />
+        <Route Component={NotFoundPage} /> 
+
         <Route
           path="/login"
           element={

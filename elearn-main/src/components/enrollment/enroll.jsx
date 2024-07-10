@@ -104,9 +104,9 @@ const EnrollmentForm = () => {
     };
 
     return (
-        <Container className="mt-5">
-            <Card className={`enrollment-card ${submitted ? 'fade-out' : 'fade-in'}`}>
-                <Card.Header className="text-center">
+        <Container className="mt-5 mb-5">
+<Card className={`enrollment-card ${submitted ? 'fade-out' : 'fade-in'}`} style={{ padding: '20px' }}>
+<Card.Header className="text-center">
                     <h2>Course Enrollment</h2>
                 </Card.Header>
                 <Card.Body>

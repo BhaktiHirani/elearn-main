@@ -7,7 +7,7 @@ import { Link as ScrollLink } from 'react-scroll'; // Import ScrollLink for smoo
 const navLinks = [
   { display: 'Home', url: '/' },
   { display: 'Courses', url: 'courses' }, // Updated URL for ScrollLink functionality
-  { display: 'About', url: 'about' }, 
+  { display: 'About Us', url: 'about' }, 
   { display: 'Contact Us', url: '/contact' },
 ];
 
@@ -42,7 +42,7 @@ const Header = () => {
                   duration={500} 
                   className="navbar-link"
                   style={{ 
-                    color: '#3D3D3D', // Ensure text color matches
+                    color: '#3D3D3DF3', // Ensure text color matches
                     padding: '0.5rem 1rem', // Ensure padding matches
                     textDecoration: 'none', // Ensure text decoration matches
                     fontSize: '1rem', // Ensure font size matches

@@ -19,7 +19,7 @@ const Footer = () => {
           </div>
           <div className="col-md-4 mb-4">
             <h5>Contact</h5>
-            <p>123 Street, New York, USA</p>
+            <p>123 Street, Bhuj-Kutch, India </p>
             <p>+012 345 67890</p>
             <p><a href="mailto:mail@domain.com" className="text-white">mail@domain.com</a></p>
             <div>

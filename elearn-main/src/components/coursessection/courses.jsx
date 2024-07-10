@@ -152,9 +152,9 @@ const Courses = ({ limit, showSearchBar }) => {
                   <CardImg top width="100%" src={item.ImgUrl} alt={item.title} className="rounded-top" />
                   <CardBody>
                     <CardTitle tag="h4" className="mb-2">
-                      {truncateTitle(item.title, 15)}
+                      {truncateTitle(item.title, 26)}
                     </CardTitle>
-                    <CardText className="mb-3">
+                    <CardText className="mb-2 m-lg-2">
                       {item.modules ? `${item.modules.length} Modules | ` : ''}
                       {enrolledStudents[item.id]} Students | {averageRatings[item.id]} Average Rating
                     </CardText>
