@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
 import { auth, db } from '../../firebase'; // Ensure this is the correct path to your firebase.js
 import '../signup/signup.css'; // Importing the same CSS file as Signup
 import { collection, addDoc } from 'firebase/firestore';
 import { sendPasswordResetEmail } from 'firebase/auth';
-=======
-import { auth, db } from '../../firebase';
-import { toast } from 'react-toastify';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is imported
->>>>>>> d9a6411037be3aa09c9aa3f4516a827723ab3d59
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -37,7 +30,6 @@ const ForgotPassword = () => {
     setErrors({});
 
     try {
-<<<<<<< HEAD
       console.log('Sending password reset email to:', email);
       const actionCodeSettings = {
         url: `${window.location.origin}/reset-password`,
@@ -50,20 +42,10 @@ const ForgotPassword = () => {
 
       // Save the reset password request in Firestore (optional)
       await addDoc(collection(db, 'passwordResetRequests'), {
-=======
-      console.log('Sending password reset email to:', email); // Debug log
-      await sendPasswordResetEmail(auth, email);
-      setIsEmailSent(true);
-
-      // Save the reset password request in Firestore
-      console.log('Saving password reset request to Firestore'); // Debug log
-      await db.collection('passwordResetRequests').add({
->>>>>>> d9a6411037be3aa09c9aa3f4516a827723ab3d59
         email,
         createdAt: new Date(),
       });
 
-<<<<<<< HEAD
       window.alert('Password reset email sent successfully! Please check your email.');
     } catch (error) {
       console.error('Error sending password reset email:', error);
@@ -73,16 +55,6 @@ const ForgotPassword = () => {
       } else {
         window.alert('Error sending password reset email. Please try again later.');
       }
-=======
-      toast.success('Password reset email sent successfully!', {
-        position: 'top-center',
-      });
-    } catch (error) {
-      console.error('Error sending password reset email:', error.message); // Debug log
-      toast.error(error.message, {
-        position: 'bottom-center',
-      });
->>>>>>> d9a6411037be3aa09c9aa3f4516a827723ab3d59
     }
   };
 
