@@ -1,76 +1,102 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { auth, db } from '../../firebase';
-import { toast } from 'react-toastify';
+import { auth, db } from '../../firebase'; // Ensure this is the correct path to your firebase.js
+import '../signup/signup.css'; // Importing the same CSS file as Signup
+import { collection, addDoc } from 'firebase/firestore';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let errors = {};
+    if (!email) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = 'Email address is invalid';
+    }
+    return errors;
+  };
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+
     try {
-      await auth.sendPasswordResetEmail(email);
+      console.log('Sending password reset email to:', email);
+      const actionCodeSettings = {
+        url: `${window.location.origin}/reset-password`,
+        handleCodeInApp: true,
+      };
+
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
       setIsEmailSent(true);
-      // Save the reset password request in Firestore
-      await db.collection('passwordResetRequests').add({
+      console.log('Password reset email sent successfully!');
+
+      // Save the reset password request in Firestore (optional)
+      await addDoc(collection(db, 'passwordResetRequests'), {
         email,
         createdAt: new Date(),
       });
-      toast.success('Password reset email sent successfully!', {
-        position: 'top-center',
-      });
+
+      window.alert('Password reset email sent successfully! Please check your email.');
     } catch (error) {
-      toast.error(error.message, {
-        position: 'bottom-center',
-      });
+      console.error('Error sending password reset email:', error);
+      if (error.code === 'auth/network-request-failed') {
+        console.log('Retrying password reset email...');
+        setTimeout(() => handleResetPassword(e), 2000); // Retry after 2 seconds
+      } else {
+        window.alert('Error sending password reset email. Please try again later.');
+      }
     }
   };
 
   return (
-    <div className="container-fluid vh-100 d-flex justify-content-center align-items-center">
-      <div className="card p-4 animate__animated animate__fadeIn" style={{ backgroundSize: 'cover' }}>
-        <div className="row">
-          <div className="col-md-6">
-            <img
-              src={'https://asset.gecdesigns.com/img/background-templates/isometric-e-learning-background-template-1612282245987-cover.webp'}
-              alt="Background"
-              className="img-fluid"
-            />
-          </div>
-          <div className="col-md-6">
-            <div className="card-body">
-              <h2 className="card-title text-center mb-4">Forgot Password</h2>
-              {!isEmailSent ? (
-                <form onSubmit={handleResetPassword}>
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <button type="submit" className="btn btn-primary w-100">
-                    Reset Password
-                  </button>
-                </form>
-              ) : (
-                <div>
-                  <p className="text-center mb-4">Password reset email sent to {email}</p>
-                  <Link to="/login" className="btn btn-primary w-100">
-                    Back to Login
-                  </Link>
-                </div>
-              )}
+    <div className="signup-container">
+      <div className="signup-card">
+        <div className="signup-image">
+          <img
+            src="https://t3.ftcdn.net/jpg/01/68/60/76/360_F_168607659_evWV3Ab6ik9l0L1ihrjCaxYKEqxGNrbr.jpg"
+            alt="Background"
+          />
+        </div>
+        <div className="signup-form">
+          <h2 className="signup-title">Forgot Password</h2>
+          {!isEmailSent ? (
+            <form onSubmit={handleResetPassword}>
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email</label>
+                <input
+                  type="email"
+                  className={`form-control ${errors.email && 'is-invalid'}`}
+                  id="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+              </div>
+              <button type="submit" className="btn btn-primary signup-btn">
+                Reset Password
+              </button>
+            </form>
+          ) : (
+            <div>
+              <p className="text-center mb-4">Password reset email sent to {email}</p>
+              <p className="text-center">Please check your email to reset your password.</p>
+              <Link to="/login" className="btn btn-primary signup-btn">
+                Back to Login
+              </Link>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase'; // Adjust the path as necessary
-import { getFirestore, doc, getDoc,collection,addDoc } from 'firebase/firestore';
+import { auth,db } from '../firebase';
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -11,7 +11,6 @@ export const useAuth = () => {
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [db, setDb] = useState(null); // State to hold Firestore instance
 
   const login = async (email, password) => {
     try {
@@ -21,6 +20,7 @@ const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
   const submitReview = async (reviewData) => {
     try {
       const { currentUser } = auth;
@@ -50,10 +50,9 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async user => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user && !user.displayName) {
         // If user is logged in but does not have displayName, fetch from Firestore
-        const db = getFirestore();
         const userDocRef = doc(db, "Users", user.uid);
         const docSnap = await getDoc(userDocRef);
         if (docSnap.exists()) {

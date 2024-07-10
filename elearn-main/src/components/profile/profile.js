@@ -115,7 +115,7 @@ function Profile() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   className="btn btn-secondary mx-2"
-                  onClick={() => navigate('/change-password')}
+                  onClick={() => navigate('/forgotpassword')}
                 >
                   Change Password
                 </motion.button>

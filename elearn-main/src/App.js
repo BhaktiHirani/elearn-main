@@ -19,7 +19,6 @@ import CoursesPage from './components/coursessection/coursepage';
 import AuthProvider,{ useAuth }  from './components/authprovider';
 import { auth } from './firebase';
 import EditProfile from './components/editprofile/editprofile';
-import ChangePassword from './components/changepassword/changepassword';
 
 function App() {
   const { currentUser, loading } = useAuth();
@@ -100,7 +99,7 @@ function App() {
   path="/change-password"
   element={
     isLoggedIn ? (
-      <ChangePassword />
+      <ForgotPassword />
     ) : (
       <Navigate to="/login" replace />
     )

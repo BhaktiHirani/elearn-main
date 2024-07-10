@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase';
@@ -6,7 +5,6 @@ import { Link } from 'react-router-dom';
 import '../../components/signup/signup.css'; // Importing the same CSS file as Signup
 
 function Login({ onLoginSuccess }) {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -31,6 +29,7 @@ function Login({ onLoginSuccess }) {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      window.alert('Please fix the errors before submitting.');
       return;
     }
     setErrors({});
@@ -43,15 +42,19 @@ function Login({ onLoginSuccess }) {
       } else {
         // If user is not found, set error
         setErrors({ general: 'User not found. Please check your email.' });
+        window.alert('User not found. Please check your email.');
       }
     } catch (error) {
       // Handle specific error codes
       if (error.code === 'auth/user-not-found') {
         setErrors({ general: 'User not found. Please check your email.' });
+        window.alert('User not found. Please check your email.');
       } else if (error.code === 'auth/wrong-password') {
         setErrors({ password: 'Incorrect password. Please try again.' });
+        window.alert('Incorrect password. Please try again.');
       } else {
         setErrors({ general: 'Login failed. Please try again later.' });
+        window.alert('Incorrect email or password. Please try again!');
       }
     }
   };
@@ -99,11 +102,6 @@ function Login({ onLoginSuccess }) {
               Login
             </button>
           </form>
-          {errors.general && (
-            <div className="invalid-feedback text-center mt-3">
-              {errors.general}
-            </div>
-          )}
           <div className="login-link">
             <Link to="/forgotpassword">Forgot password?</Link>
           </div>
