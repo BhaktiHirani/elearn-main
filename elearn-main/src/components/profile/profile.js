@@ -100,6 +100,21 @@ function Profile() {
     fetchUserData();
   }, [currentUser]);
 
+  // Function to remove duplicates based on courseTitle
+  const removeDuplicates = (array, key) => {
+    const seen = new Set();
+    return array.filter(item => {
+      const value = item[key];
+      if (seen.has(value)) {
+        return false;
+      }
+      seen.add(value);
+      return true;
+    });
+  };
+
+  const uniqueCompletedQuizzes = removeDuplicates(completedQuizzes, 'courseTitle');
+
   if (loading) {
     return <Loading />;
   }
@@ -134,7 +149,7 @@ function Profile() {
                   <p className="pl-3"><strong>Total Courses Enrolled:</strong> {enrolledCourses.length}</p>
                 </div>
                 <div className="col-md-6">
-                  <p className="pl-3"><strong>Total Quizzes Completed:</strong> {completedQuizzes.length}</p>
+                  <p className="pl-3"><strong>Total Quizzes Completed:</strong> {uniqueCompletedQuizzes.length}</p>
                 </div>
               </div>
               <div className="text-center mb-4">
@@ -151,7 +166,7 @@ function Profile() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   className="btn btn-secondary mx-2"
-                  onClick={() => navigate('/forgotpassword')}
+                  onClick={() => navigate('/change-password')}
                 >
                   Change Password
                 </motion.button>
@@ -170,7 +185,7 @@ function Profile() {
                   <p>No enrolled courses.</p>
                 )}
               </div>
-              <CompletedQuizzes completedQuizzes={completedQuizzes} />
+              <CompletedQuizzes completedQuizzes={uniqueCompletedQuizzes} />
             </div>
           </motion.div>
         </div>
