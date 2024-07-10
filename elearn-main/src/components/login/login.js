@@ -39,10 +39,13 @@ function Login({ onLoginSuccess }) {
       if (user) {
         console.log("User logged in Successfully!");
         onLoginSuccess();
+<<<<<<< HEAD
       } else {
         // If user is not found, set error
         setErrors({ general: 'User not found. Please check your email.' });
         window.alert('User not found. Please check your email.');
+=======
+>>>>>>> d9a6411037be3aa09c9aa3f4516a827723ab3d59
       }
     } catch (error) {
       // Handle specific error codes
@@ -54,7 +57,11 @@ function Login({ onLoginSuccess }) {
         window.alert('Incorrect password. Please try again.');
       } else {
         setErrors({ general: 'Login failed. Please try again later.' });
+<<<<<<< HEAD
         window.alert('Incorrect email or password. Please try again!');
+=======
+        window.alert('Login failed. Please try again later.');
+>>>>>>> d9a6411037be3aa09c9aa3f4516a827723ab3d59
       }
     }
   };
@@ -93,7 +100,6 @@ function Login({ onLoginSuccess }) {
                 required
               />
               {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-              {errors.general && <div className="invalid-feedback">{errors.general}</div>}
             </div>
             <button
               type="submit"
